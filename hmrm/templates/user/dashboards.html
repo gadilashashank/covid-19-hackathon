@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block content %}
+<div id="wrapper">
+    <div id="content" class="uk-container">
+        <h1>Dashboards</h1>
+        <div uk-filter="target: .js-filter">
+            <ul class="uk-subnav uk-subnav-pill">
+                <li class="uk-active" uk-filter-control><a href="#">All</a></li>
+                <li uk-filter-control="[data-color='administration']"><a href="#">Administration</a></li>
+                <li uk-filter-control="[data-color='institution']"><a href="#">Institution</a></li>
+            </ul>
+            <ul class="js-filter uk-child-width-1-2 uk-child-width-1-2@m" uk-grid>
+                {% for board in current_user.dashboards %}
+                <li data-color="{{ board.type }}">
+                    <div class="uk-card uk-card-default uk-card-body">
+                        <a href=""><h3 class="uk-card-title">{{ board.name }}</h3></a>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                        {% if board.type == "administration" %}
+                        <div class="uk-card-badge uk-label uk-label-success">ADMINISTRATION</div>
+                        {% else %}
+                        <div class="uk-card-badge uk-label uk-label-default">INSTITUTION</div>
+                        {% endif %}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>        
+        </div>
+    </div>
+</div>
+{% endblock %}

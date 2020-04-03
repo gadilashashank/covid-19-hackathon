@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="../static/css/administration/view.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+{% endblock %}
+{% block content %}
+<div id="content">
+    <div id="sidebar" class="tm-sidebar-left uk-background-default">
+        <center>
+            <div class="user">
+                <img id="avatar" width="100" class="uk-border-circle" src="https://image.flaticon.com/icons/svg/167/167750.svg" />
+                <div class="uk-margin-top"></div>
+                <h3 class="uk-text-truncate">{{ current_user.first_name }} {{ current_user.last_name }}</h3>
+                <div id="email" class="uk-text-truncate">{{ current_user.email }}</div>
+                <span id="status" class="uk-margin-top uk-label uk-label-success">MANGALURU DC</span>
+            </div>
+            <br />
+        </center>
+        <ul class="uk-nav uk-nav-default">    
+            <li class="uk-nav-header">
+                General
+            </li>
+            <li><a href="buttons.html">Discussion Forum</a></li>
+            <li><a href="components.html">Administration</a></li>
+            <li><a href="tables.html">Members</a></li>
+    
+            <li class="uk-nav-header">
+                Statistics
+            </li>
+            <li><a href="login.html">Patient Statistics</a></li>
+            <li><a href="register.html">Supply-demand Statistics</a></li>
+            <li><a href="article.html">Qurantine Information</a></li>
+        </ul>
+    </div>
+    <div class="content-padder content-background">
+        <div class="uk-section-small uk-section-default header">
+            <div class="uk-container uk-container-large">
+                <h1>{{ current_entity.name }}</h1>
+                <p>{{ current_entity.shortname }}</p>
+                <ul class="uk-breadcrumb">
+                    <li><a href="/administration/overview">Overview</a></li>
+                    <li><span href=#>{{ current_entity.shortname }}</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="uk-section-small">
+            <div class="uk-container uk-container-large">
+                <div uk-grid class="uk-child-width-1-1@s uk-child-width-1-2@m uk-child-width-1-4@xl">
+                    <div>
+                      <div class="uk-card uk-card-default uk-card-body">
+                          <span class="statistics-text">Total Cases</span><br />
+                          <span class="statistics-number">{{ current_entity.cases.active + current_entity.cases.recovered + current_entity.cases.deaths }}</span>
+                      </div>
+                    </div>  
+                    <div>
+                        <div class="uk-card uk-card-default uk-card-body">
+                            <span class="statistics-text">Active Cases</span><br />
+                            <span class="statistics-number">
+                                {{ current_entity.cases.active }}
+                                <span class="uk-label uk-label-warning">+{{ current_entity.cases.active_increment }}</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div>
+                      <div class="uk-card uk-card-default uk-card-body">
+                          <span class="statistics-text">Recovered</span><br />
+                          <span class="statistics-number">
+                            {{ current_entity.cases.recovered }}
+                            <span class="uk-label uk-label-success">+{{ current_entity.cases.recovered_increment }}</span>
+                          </span>
+                      </div>
+                    </div>
+                    <div>
+                        <div class="uk-card uk-card-default uk-card-body">
+                            <span class="statistics-text">Deaths</span><br/>
+                            <span class="statistics-number">
+                              {{ current_entity.cases.deaths }}
+                              <span class="uk-label uk-label-danger">+{{ current_entity.cases.deaths_increment }}</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+              <div uk-grid class="uk-child-width-1-1@s uk-child-width-1-2@l">
+                <div>
+                  <div class="uk-card uk-card-default">
+                    <div class="uk-card-header">
+                      Active
+                    </div>
+                    <div class="uk-card-body">
+                      <canvas id="active_chart"></canvas>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div class="uk-card uk-card-default">
+                    <div class="uk-card-header">
+                      Recovered
+                    </div>
+                    <div class="uk-card-body">
+                      <canvas id="recovered_chart"></canvas>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                    <div class="uk-card uk-card-default">
+                      <div class="uk-card-header">
+                        Deaths
+                      </div>
+                      <div class="uk-card-body">
+                        <canvas id="death_chart"></canvas>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script> 
+ 
+  function resize(){
+    var sidebar = $('#sidebar');
+    var padder = $('.content-padder');
+    padder.removeAttr( 'style' );
+    if( $( window ).width() < 960 && sidebar.css('display') == 'block' ) {
+      sidebarToggle(false);
+    } else if($( window ).width() > 960 && sidebar.css('display') == 'none'){
+      sidebarToggle(true);
+    }
+  }
+
+  if($( window ).width() < 960) {
+    sidebarToggle(false);
+  }
+
+  $( window ).resize(function() {
+    resize()
+  });
+
+  $('.content-padder').click(function() {
+    if( $( window ).width() < 960 ) {
+      sidebarToggle(false);
+    }
+  });
+
+  var active_data ={
+    labels: Array.apply(null, {length: {{ current_entity.history.active|length }}}).map(function(value, index){ return index + 1; }),
+    datasets: [{
+      label: 'active',
+      data: {{ current_entity.history.active }}
+    }]
+  };
+
+  var recovered_data ={
+    labels: Array.apply(null, {length: {{ current_entity.history.recovered|length }}}).map(function(value, index){ return index + 1; }),
+    datasets: [{
+      label: 'recovered',
+      data: {{ current_entity.history.recovered }}
+    }]
+  };
+
+  var deaths_data ={
+    labels: Array.apply(null, {length: {{ current_entity.history.deaths|length }}}).map(function(value, index){ return index + 1; }),
+    datasets: [{
+      label: 'deaths',
+      data: {{ current_entity.history.deaths }}
+    }]
+  };
+
+  var options = {
+    scales: {
+      xAxes: [{
+        scaleLabel: {
+          display: true,
+          labelString: 'days'
+        },
+        ticks: {
+          autoSkip: true,
+          beginAtZero:true,
+        }
+      }],
+      yAxes: [{
+        scaleLabel: {
+          display: true,
+          labelString: 'cases'
+        },
+        ticks: {
+          autoSkip: true,
+          beginAtZero:true
+        }
+      }]
+    }
+  }
+
+  var ctx = document.getElementById("active_chart").getContext('2d');
+  var active_chart = new Chart(ctx, {
+    type: 'line',
+    data: active_data,
+    options: options
+  });
+  
+  var ctx = document.getElementById("recovered_chart").getContext('2d');
+  var recovered_chart = new Chart(ctx, {
+    type: 'line',
+    data: recovered_data,
+    options: options
+  });
+
+  var ctx = document.getElementById("death_chart").getContext('2d');
+  var death_chart = new Chart(ctx, {
+    type: 'line',
+    data: deaths_data,
+    options: options
+  });
+</script>
+{% endblock %}
