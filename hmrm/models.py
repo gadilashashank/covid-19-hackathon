@@ -83,7 +83,7 @@ class Hospital(db.Model):
 
 
 class Patient(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    patient_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     sex = db.Column(db.String(1))
     hospital_id = db.Column(db.Integer, db.ForeignKey(
@@ -91,7 +91,7 @@ class Patient(db.Model):
     hospital_ref = db.relationship(
         "Hospital", backref=db.backref("Hospital", cascade="all"))
 
-    condition = db.Column(db.String(80))
+    condition = db.Column(db.Enum("state_patient"))
     age = db.Column(db.Integer)
     disease = db.Column(db.String(512))
     history = db.Column(db.String(1024))
@@ -104,7 +104,7 @@ class History_patient(db.Model):
                 nullable = False, autoincrement=True)
     # patient_id = db.Column(db.Integer, nullable = False)
     date = db.Column(db.DateTime)
-    condition = db.Column(db.Enum(state_patient))
+    condition = db.Column(db.Enum("state_patient"))
     patient_id = db.Column(db.Integer, db.ForeignKey(
         Patient.patient_id, ondelete="CASCADE"), nullable = False)
     

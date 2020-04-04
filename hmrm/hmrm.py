@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, request, Flask, session, abort, re
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
-from hmrm.models import db, Users, Hospital, Patient, History
+from hmrm.models import db, Users, Hospital, Patient, History_patient
 # from models import db, Users, Hospital
 
 # app = Blueprint("hmrm", __name__, static_folder="static/")
