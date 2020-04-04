@@ -33,7 +33,7 @@ create type  state_patient AS ENUM ('DEAD', 'MILD', 'CRITICAL', 'ASYMPTOMATIC',
 
 create table patients
 (
-    patient_id int primary key not null,
+    patient_id serial primary key not null,
     name varchar(100) not null,
     sex varchar(10), -- "Handle genders?"
     hospital int not null,

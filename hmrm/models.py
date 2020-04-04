@@ -72,7 +72,7 @@ class Hospital(db.Model):
     #     return self
 
 class Patient(db.Model):
-    patient_id = db.Column(db.Integer, primary_key=True)
+    patient_id = db.Column(db.Integer, primary_key=True, autoincrement = True)
     name = db.Column(db.String(80))
     sex = db.Column(db.String(10))
     hospital_id = db.Column(db.Integer, db.ForeignKey(
