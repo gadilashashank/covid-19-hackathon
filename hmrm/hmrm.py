@@ -305,7 +305,40 @@ def institution_create():
 @app.route("/institution/<int:id>/overview")
 @login_required
 def institution_overview(id):
-    return render_template("institution/overview.html", current_user = current_user, current_institution = current_institution)
+    hospital = db.session.query(Hospital).where(Hospital.hospital_id == id).first()
+
+    dead_patients = db.session.query(Patient).where(Patient.hospital_id == id).where(Patient.condition == "DEAD").sum()
+    suspected_patients = db.session.query(Patient).where(Patient.hospital_id == id).where(Patient.condition == "SUSPECTED").sum()
+    recovered_patients = db.session.query(Patient).where(Patient.hospital_id == id).where(Patient.condition == "RECOVERED   ").sum()
+    active_patients = db.session.query(Patient).where(Patient.hospital_id == id).where(Patient.condition == "ACTIVE").sum()
+
+    history = db.session.query(History).where(History.hospital_id == id).order_by(date).all()
+
+    active = []
+    recovered = []
+    fatal = []
+    for i in history:
+        active.append(i.active)
+        recovered.append(i.active)
+        fatal.append(i.active)
+
+    entity = {
+        "name": hospital.name,
+        "id": hospital.hospital_id,
+        "cases": {
+            "active": active,
+            "recovered": recovered_patients,
+            "fatal": dead_patients,
+            "suspected": suspected_patients
+        },
+
+        "history": {
+            "active": active,
+            "recovered": recovered,
+            "fatal": fatal
+        }
+    }
+    return render_template("institution/overview.html", current_user = current_user, current_institution = entity)
 
 @app.route("/institution/<int:id>/members")
 @login_required
@@ -371,34 +404,4 @@ def administration_overview(id):
 @app.route("/administration/view/<int:id>")
 @login_required
 def administration_view(id):
-    hospital = db.session.query(Hospital).where(Hospital.hospital_id == id).first()
-    dead_patients = db.session.query(Patient).where(Patient.hospital_id == id).where(Patient.condition == "DEAD").sum()
-    critical_patients = db.session.query(Patient).where(Patient.hospital_id == id).where(Patient.condition == "CRITICAL").sum()
-    discharge_soon_patients = db.session.query(Patient).where(Patient.hospital_id == id).where(Patient.condition == "DISCHARGE_SOON").sum()
-    recovered_patients = db.session.query(Patient).where(Patient.hospital_id == id).where(Patient.condition == "RECOVERED   ").sum()
-    history = db.session.query(History).where(History.hospital_id == id).order_by(date).all()
-
-    active = []
-    recovered = []
-    fatal = []
-    for i in history:
-        active.append(i.active)
-        recovered.append(i.active)
-        fatal.append(i.active)
-
-    entity = {
-        "name": hospital.name,
-        "id": hospital.hospital_id,
-        "cases": {
-            "active": str(dead_patients + critical_patients + discharge_soon_patients),
-            "recovered": recovered_patients,
-            "fatal": dead_patients,
-        },
-
-        "history": {
-            "active": active,
-            "recovered": recovered,
-            "fatal": fatal
-        }
-    }
-    return entity
+    pass
