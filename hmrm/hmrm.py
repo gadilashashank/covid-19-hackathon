@@ -256,6 +256,21 @@ def user_register():
 
     return render_template("user/register.html", current_user=current_user)
 
+@app.route("/user/notifications")
+@login_required
+def user_notifications():
+    invitations = [{
+        "dashboard_name" : "Hogwarts City",
+        "type" : "administration",
+        "invited_date" : "04 April 2020 17:24 IST",
+    },
+    {
+        "dashboard_name" : "Hogwarts Central Hospital",
+        "type" : "institution",
+        "invited_date" : "04 April 2020 17:37 IST",
+    }]
+    return render_template("user/notifications.html", current_user = current_user, invitations = invitations)
+
 @app.route("/user/logout")
 def user_logout():
     session.clear()
