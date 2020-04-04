@@ -32,3 +32,27 @@ class Users(db.Model):
             'password': self.password,
             'email': self.email,
         }
+
+class Hospital(db.Model):
+    hospital_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80))
+    max_bed = db.Column(db.Integer)
+    current_beds = db.Column(db.Integer)
+    state = db.Column(db.String(80))
+    district = db.Column(db.String(80))
+    num_ventilators = db.Column(db.Integer)
+    mask_needed = db.Column(db.Integer)
+    num_testing_kits = db.Column(db.Integer)
+    testing_capacity = db.Column(db.Integer)
+
+class Patient(db.Model):
+    patient_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80))
+    sex = db.Column(db.String(1))
+    hospital_id = db.Column(db.Integer, db.ForeignKey(Hospital.id, ondelete="CASCADE"), nullable=False)
+    hospital_ref = db.Relationship("hospital", backref=db.Backref("hospital_from_patient", cascade="all"))
+
+    condition = db.Column(db.String(80))
+    age = db.Column(db.Integer)
+    disease = db.Column(db.String(512))
+    history = db.Column(db.String(1024))
