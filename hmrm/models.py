@@ -104,9 +104,16 @@ class History_patient(db.Model):
 
 
 class Administration(db.Model):
-    
     doff_id = db.Column(db.Integer, primary_key = True, nullable = False, 
             autoincrement = True)
-    region = db.Column(db.String(50))
     name = db.Column(db.String(100))
     sname = db.Column(db.String(30))
+    region = db.Column(db.String(50))
+    admin = db.Column(db.String(330), db.ForeignKey(
+        Users.email, ondelete="CASCADE"), nullable=False)
+
+    def __init__(self, name, sname, admin, region):
+        self.name = name
+        self.sname = sname
+        self.region = region
+        self.admin = admin

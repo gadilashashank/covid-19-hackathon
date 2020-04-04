@@ -13,27 +13,27 @@
                     <div class="uk-width-1-1@m">
                         <div class="uk-margin uk-width-large uk-margin-auto uk-card uk-card-default uk-card-body uk-box-shadow-large">
                             <h3 class="uk-card-title uk-text-center">Create Administrative Block</h3>
-                            <form>
+                            <form method="post">
                                 <div class="uk-margin">
                                     <div class="uk-inline uk-width-1-1">
                                         <span class="uk-form-icon" uk-icon="icon: home"></span>
-                                        <input class="uk-input uk-form-large" type="text" placeholder="name">
+                                        <input class="uk-input uk-form-large" type="text" placeholder="name" name="name">
                                     </div>
                                 </div>
                                 <div class="uk-margin">
                                     <div class="uk-inline uk-width-1-1">
                                         <span class="uk-form-icon" uk-icon="icon: tag"></span>
-                                        <input class="uk-input uk-form-large" type="text" placeholder="short name (for better display)">
+                                        <input class="uk-input uk-form-large" type="text" placeholder="short name (for better display)" name="sname">
                                     </div>
                                 </div>
                                 <div class="uk-margin">
                                     <div class="uk-inline uk-width-1-1">
                                         <span class="uk-form-icon" uk-icon="icon: location"></span>
-                                        <input class="uk-input uk-form-large" type="text" placeholder="region">
+                                        <input class="uk-input uk-form-large" type="text" placeholder="region" name="region">
                                     </div>
                                 </div>
                                 <div class="uk-margin">
-                                    <button class="uk-button uk-button-primary uk-button-large uk-width-1-1">Create</button>
+                                    <button type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">Create</button>
                                 </div>
                             </form>
                         </div>

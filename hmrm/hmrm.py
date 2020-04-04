@@ -201,8 +201,8 @@ def user_dashboards():
     # need to make a list like the one below
     dashboards = [
         {
-            "id" : 0,
-            "name" : "Hogwarts City",
+            "id" : 1,
+            "name" : "Hogwarts City Corporation",
             "type" : "administration"
         },
         {
@@ -383,9 +383,22 @@ def get_administration_entity(id):
 
     return entity
 
-@app.route("/administration/create")
+@app.route("/administration/create", methods=['GET', 'POST'])
 @login_required
 def administration_create():
+    if request.method == "POST":
+        data = request.form
+        administration = Administration(
+            name = data['name'],
+            sname = data['sname'],
+            region = data['region'],
+            admin = session['email']
+        )
+
+        db.session.add(administration)
+        db.session.commit()
+        return user_dashboards()
+
     return render_template("administration/create.html")
 
 @app.route("/administration/<int:id>/overview/")

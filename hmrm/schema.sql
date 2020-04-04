@@ -52,6 +52,7 @@ create table administration
     doff_id serial primary key not null,
     name varchar(100),
     sname varchar(30),
+    admin varchar(330),
     -- off_id int references users(user_id),
 --    "Need to make a better location thing"
     --state varchar(30),
