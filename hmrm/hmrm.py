@@ -15,56 +15,6 @@ db.init_app(app)
 
 bcrypt = Bcrypt(app)
 
-current_user = {
-    "dashboards": [
-        {
-            "id" : 0,
-            "name" : "Hogwarts City",
-            "type" : "administration"
-        },
-        {
-            "id" : 1,
-            "name" : "Hogwarts Hospital",
-            "type" : "institution"
-        },
-        {
-            "id" : 2,
-            "name" : "Hogwarts COVID Camp",
-            "type" : "institution"
-        }
-    ]
-}
-
-current_entity = {
-    "name" : "Hogwarts",
-    "id" : 0,
-    "email_admin" : "admin@hogwarts.med",
-    "email_lab" : "lab@hogwarts.med",
-    "phone_admin" : 987654321,
-    "phone_lab" : 987654321,
-    "address" : "hogwarts",
-    "shortname" : "Hogwarts",
-    "type" : "admnistration",
-    "patient_capacity" : 100,
-    "testing_capacity" : 100,
-    "cases" : {
-        "suspected" : 64,
-        "suspected_increment" : 12,
-        "active" : 1432,
-        "active_increment" : 1432 - 1244,
-        "recovered" : 74,
-        "recovered_increment" : 4,
-        "fatal" : 16,
-        "fatal_increment" : 2
-    },
-
-    "history": {
-        "active": [62, 109, 450, 683, 892, 1043, 1244, 1432],
-        "recovered": [4, 8, 12, 24, 44, 67, 70, 74],
-        "fatal": [0, 0, 0, 1, 6, 12, 14, 16],
-    }
-}
-
 current_entity2 = {
     "name" : "Hogwarts Hospital",
     "id" : 1,
@@ -141,6 +91,7 @@ current_entity4 = {
 }
 
 current_objects = [current_entity2, current_entity3, current_entity4]
+
 current_admin = {
     "name" : "Hogwarts City",
     "id" : 0,
@@ -189,7 +140,6 @@ current_institution = {
     },
 }
 
-
 # decorator for requiring login to access a page
 def login_required(f):
     @functools.wraps(f)
@@ -201,7 +151,7 @@ def login_required(f):
 
 @app.route("/")
 def index():
-    return render_template("index.html", current_user=current_user)
+    return render_template("index.html")
 
 @app.route("/user/login", methods=['GET', 'POST'])
 def user_login():
@@ -229,14 +179,14 @@ def user_login():
                 session['is_authenticated'] = True
                 return redirect(success_url)
             else:
-                return render_template("user/login.html", notification="Invalid login credentials.", current_user=current_user)
+                return render_template("user/login.html", notification="Invalid login credentials.")
 
         except KeyError as e:
             print("KeyError: ", e)
-            return render_template("user/login.html", notification="Oops! Something went wrong.", current_user=current_user)
+            return render_template("user/login.html", notification="Oops! Something went wrong.")
 
     # TODO Use Oauth token based login instead of rendering later.
-    return render_template("user/login.html", current_user=current_user)
+    return render_template("user/login.html")
 
 @app.route("/user/register", methods=['GET', 'POST'])
 def user_register():
@@ -244,7 +194,7 @@ def user_register():
     if request.method == 'POST':
         try:
             if request.form['password'] != request.form['confirm_password']:
-                return render_template("user/register.html", notification="password mismatch", current_user=current_user)
+                return render_template("user/register.html", notification="password mismatch")
 
             password = request.form['password']
             hashed = bcrypt.generate_password_hash(password).decode('utf-8')
@@ -265,9 +215,9 @@ def user_register():
 
         except KeyError as e:
             print("Keyerror: ", e)
-            return render_template("user/register.html", notification="Something went wrong! Sorry", current_user=current_user)
+            return render_template("user/register.html", notification="Something went wrong! Sorry")
 
-    return render_template("user/register.html", current_user=current_user)
+    return render_template("user/register.html")
 
 @app.route("/user/notifications")
 @login_required
@@ -282,7 +232,7 @@ def user_notifications():
         "type" : "institution",
         "invited_date" : "04 April 2020 17:37 IST",
     }]
-    return render_template("user/notifications.html", current_user = current_user, invitations = invitations)
+    return render_template("user/notifications.html", invitations = invitations)
 
 @app.route("/user/logout")
 def user_logout():
@@ -294,20 +244,23 @@ def user_logout():
 def user_dashboards():
     # BACKEND TODO: fetch all dashboards of a user
     # need to make a list like the one below
-    # [
-    #     {
-    #         "id" : 0,
-    #         "name" : "Hogwarts City",
-    #         "type" : "administration"
-    #     },
-    #     {
-    #         "id" : 1,
-    #         "name" : "Hogwarts Hospital",
-    #         "type" : "institution"
-    #     }
-    # ]
-    # current_user is the wrong way to do it but use it for now; Yashas will fix thing once the backend can populate info in the current way
-    return render_template("user/dashboards.html", current_user=current_user)
+    dashboards = [
+        {
+            "id" : 0,
+            "name" : "Hogwarts City",
+            "type" : "administration"
+        },
+        {
+            "id" : 1,
+            "name" : "Hogwarts Hospital",
+            "type" : "institution"
+        },
+        {
+            "id" : 2,
+            "name" : "Hogwarts COVID Camp",
+            "type" : "institution"
+        }]
+    return render_template("user/dashboards.html", dashboards = dashboards)
 
 @app.route("/institution/create")
 @login_required
@@ -328,7 +281,7 @@ def institution_create():
         db.session.add(institution)
         db.commit()
         return jsonify({"status": "success"})
-    return render_template("institution/create.html", current_user=current_user)
+    return render_template("institution/create.html")
 
 @app.route("/institution/<int:id>/overview")
 # @login_required
@@ -347,14 +300,14 @@ def institution_overview(id):
     fatal = []
     for i in history:
         active.append(i.active)
-        recovered.append(i.active)
-        fatal.append(i.active)
+        recovered.append(i.recovered)
+        fatal.append(i.fatal)
 
     entity = {
         "name": hospital.name,
         "id": hospital.id,
         "cases": {
-            "active": active,
+            "active": active_patients,
             "recovered": recovered_patients,
             "fatal": dead_patients,
             "suspected": suspected_patients
@@ -366,7 +319,7 @@ def institution_overview(id):
             "fatal": fatal
         }
     }
-    return render_template("institution/overview.html", current_user = current_user, current_institution = entity)
+    return render_template("institution/overview.html", current_institution = entity)
 
 @app.route("/institution/<int:id>/members")
 @login_required
@@ -381,7 +334,7 @@ def institution_members(id):
       "userid" : 15,
       "created" : "04 April 2020 18:34 IST",
     }]
-    return render_template("institution/members.html", current_user = current_user, current_institution = current_institution, invitations = invitations)
+    return render_template("institution/members.html", current_institution = current_institution, invitations = invitations)
 
 @app.route("/institution/<int:id>/information")
 @login_required
@@ -399,7 +352,7 @@ def institution_information(id):
         "testing_capacity" : 0,
     }
 
-    return render_template("institution/information.html", current_user = current_user, current_institution = current_institution, capacity_info = capacity_info, contact_info = contact_info)
+    return render_template("institution/information.html", current_institution = current_institution, capacity_info = capacity_info, contact_info = contact_info)
 
 @app.route("/institution/<int:id>/records/patients")
 @login_required
@@ -417,17 +370,17 @@ def institution_records_patients(id):
             "ref" : "HOG#15292884"
         }
     ]
-    return render_template("institution/records/patients.html", current_user = current_user, current_institution = current_institution, find_results = find_results)
+    return render_template("institution/records/patients.html", current_institution = current_institution, find_results = find_results)
 
 @app.route("/administration/create")
 @login_required
 def administration_create():
-    return render_template("administration/create.html", current_user=current_user)
+    return render_template("administration/create.html")
 
 @app.route("/administration/<int:id>/overview/")
 @login_required
 def administration_overview(id):
-    return render_template("administration/overview.html", current_user = current_user, current_admin = current_admin)
+    return render_template("administration/overview.html", current_admin = current_admin)
 
 @app.route("/administration/<int:id>/members")
 @login_required
@@ -442,10 +395,39 @@ def administration_members(id):
       "userid" : 15,
       "created" : "04 April 2020 18:34 IST",
     }]
-    return render_template("administration/members.html", current_user = current_user, current_admin = current_admin, invitations = invitations)
+    return render_template("administration/members.html", current_admin = current_admin, invitations = invitations)
 
 @app.route("/administration/<int:admin_id>/view/<int:view_id>")
 @login_required
 def administration_view(admin_id, view_id):
-    return render_template("administration/view.html", current_user = current_user, current_entity = current_entity, current_admin = current_admin)
+    current_entity = {
+        "name" : "Hogwarts",
+        "id" : 0,
+        "email_admin" : "admin@hogwarts.med",
+        "email_lab" : "lab@hogwarts.med",
+        "phone_admin" : 987654321,
+        "phone_lab" : 987654321,
+        "address" : "hogwarts",
+        "shortname" : "Hogwarts",
+        "type" : "institution",
+        "patient_capacity" : 100,
+        "testing_capacity" : 100,
+        "cases" : {
+            "suspected" : 64,
+            "suspected_increment" : 12,
+            "active" : 1432,
+            "active_increment" : 1432 - 1244,
+            "recovered" : 74,
+            "recovered_increment" : 4,
+            "fatal" : 16,
+            "fatal_increment" : 2
+        },
+
+        "history": {
+            "active": [62, 109, 450, 683, 892, 1043, 1244, 1432],
+            "recovered": [4, 8, 12, 24, 44, 67, 70, 74],
+            "fatal": [0, 0, 0, 1, 6, 12, 14, 16],
+        }
+    }
+    return render_template("administration/view.html", current_entity = current_entity, current_admin = current_admin)
 
