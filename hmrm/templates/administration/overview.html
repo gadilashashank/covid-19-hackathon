@@ -25,7 +25,7 @@
                     <div>
                       <div class="uk-card uk-card-default uk-card-body">
                           <span class="statistics-text">Total Cases</span><br />
-                          <span class="statistics-number">{{ current_admin.cases.active + current_admin.cases.recovered + current_admin.cases.deaths }}</span>
+                          <span class="statistics-number">{{ current_admin.cases.active + current_admin.cases.recovered + current_admin.cases.fatal }}</span>
                       </div>
                     </div>  
                     <div>
@@ -48,10 +48,10 @@
                     </div>
                     <div>
                         <div class="uk-card uk-card-default uk-card-body">
-                            <span class="statistics-text">Deaths</span><br/>
+                            <span class="statistics-text">Fatal</span><br/>
                             <span class="statistics-number">
-                              {{ current_admin.cases.deaths }}
-                              <span class="uk-label uk-label-danger">+{{ current_admin.cases.deaths_increment }}</span>
+                              {{ current_admin.cases.fatal }}
+                              <span class="uk-label uk-label-danger">+{{ current_admin.cases.fatal_increment }}</span>
                             </span>
                         </div>
                     </div>
@@ -80,7 +80,7 @@
                     <div>
                     <div class="uk-card uk-card-default">
                       <div class="uk-card-header">
-                        Deaths
+                        Fatal
                       </div>
                       <div class="uk-card-body">
                         <canvas id="death_chart"></canvas>
@@ -94,6 +94,7 @@
                     <ul class="uk-tab" data-uk-tab="{connect:'#data-tables'}">
                         <li class="uk-active"><a href="">CASE DISTRIBUTION</a></li>
                         <li><a href="">CAPACITY STRESS</a></li>
+                        <li><a href="">TESTING</a></li>
                       </ul>
                       <ul id="data-tables" class="uk-switcher uk-margin">
                         <li>
@@ -103,7 +104,7 @@
                                         <th>Institution</th>
                                         <th>Active</th>
                                         <th>Recovered</th>
-                                        <th>Deaths</th>
+                                        <th>Fatal</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -112,7 +113,7 @@
                                         <td><a href="/administration/view/{{obj.id}}">{{ obj.name }}</a></td>
                                         <td>{{ obj.cases.active }} (+{{obj.cases.active_increment}})</td>
                                         <td>{{ obj.cases.recovered }} (+{{obj.cases.recovered_increment}})</td>
-                                        <td>{{ obj.cases.deaths }} (+{{obj.cases.deaths_increment}})</td>
+                                        <td>{{ obj.cases.fatal }} (+{{obj.cases.fatal_increment}})</td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
@@ -151,6 +152,31 @@
                                 You are not following any institution/administrations. 
                                 {% endif %}
                             </table>
+                        </li>
+                        <li>
+                          <table class="uk-table uk-table-middle uk-table-divider sortable">
+                            <thead>
+                                <tr>
+                                    <th>Institution</th>
+                                    <th>Testig Capacity (per day)</th>
+                                    <th>Active Cases</th>
+                                    <th>In Use</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for obj in current_admin.objects %}
+                                <tr>
+                                    <td><a href="/administration/view/{{obj.id}}">{{ obj.name }}</a></td>
+                                    <td>{{ obj.capacity }}</td>
+                                    <td>{{ obj.cases.active }}</td>
+                                    <td>{{ (obj.cases.active / obj.capacity * 100)|round|int }}%</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            {% if current_admin.objects|length == 0 %}
+                            You are not following any institution/administrations. 
+                            {% endif %}
+                          </table>
                         </li>
                       </ul>
                 </div>
@@ -681,11 +707,11 @@ var forEach = function(object, block, context) {
     }]
   };
 
-  var deaths_data ={
-    labels: Array.apply(null, {length: {{ current_admin.history.deaths|length }}}).map(function(value, index){ return index + 1; }),
+  var fatal_data ={
+    labels: Array.apply(null, {length: {{ current_admin.history.fatal|length }}}).map(function(value, index){ return index + 1; }),
     datasets: [{
-      label: 'deaths',
-      data: {{ current_admin.history.deaths }},
+      label: 'fatal',
+      data: {{ current_admin.history.fatal }},
       backgroundColor: "#ff4d4d",
       borderColor: "#cc0000"
     }]
@@ -733,7 +759,7 @@ var forEach = function(object, block, context) {
   var ctx = document.getElementById("death_chart").getContext('2d');
   var death_chart = new Chart(ctx, {
     type: 'line',
-    data: deaths_data,
+    data: fatal_data,
     options: options
   });
 </script>

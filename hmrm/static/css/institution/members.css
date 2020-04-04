@@ -1,0 +1,11 @@
+.orange {
+    color: orange;
+}
+  
+th.sortable {
+    color: #ec971f;
+}
+
+span.uk-icon.sort-icon {
+    float: right;
+}

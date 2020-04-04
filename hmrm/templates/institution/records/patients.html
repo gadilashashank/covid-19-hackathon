@@ -5,184 +5,204 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
 {% endblock %}
+
+{% block breadcrumb_list %}
+<li><span href=#>Records</span></li>
+<li><span href=#>Patients</span></li>
+{% endblock %}
+
 {% block right_content %}
-<div id="content">
-    <div class="content-padder content-background">
-        <div class="uk-section-small uk-section-default header">
-            <div class="uk-container uk-container-large">
-                <h1>{{ current_institution.name }}</h1>
-                <p>{{ current_institution.shortname }}</p>
-                <ul class="uk-breadcrumb">
-                    <li><a href="/institution/overview/{{overview_id}}">Overview</a></li>
-                    <li><span href=#>{{ current_institution.shortname }}</span></li>
+<div class="uk-section-small">
+    <div class="uk-container uk-container-large">
+      <h3>Manage Patient Records</h3>
+      <div uk-grid class="uk-child-width-1-1@s uk-child-width-1-2@l">
+        <div>
+          <div class="uk-card uk-card-default">
+            <div class="uk-card-body">
+              <div class="uk-margin uk-background-default">
+                <ul class="uk-tab" data-uk-tab="{connect:'#data-tables'}">
+                  <li class="uk-active"><a href="">Add Patient</a></li>
+                  <li><a href="">Edit Patient</a></li>
+                  <li><a href="">Delete Patient</a></li>
                 </ul>
-            </div>
-        </div>
-        <div class="uk-section-small">
-            <div class="uk-container uk-container-large">
-              <h3>Manage Patient Records</h3>
-              <div uk-grid class="uk-child-width-1-1@s uk-child-width-1-2@l">
-                <div>
-                  <div class="uk-card uk-card-default">
-                    <div class="uk-card-body">
-                      <div class="uk-margin uk-background-default">
-                        <ul class="uk-tab" data-uk-tab="{connect:'#data-tables'}">
-                          <li class="uk-active"><a href="">Add Patient</a></li>
-                          <li><a href="">Edit Patient</a></li>
-                          <li><a href="">Delete Patient</a></li>
-                        </ul>
-                        <ul id="data-tables" class="uk-switcher uk-margin">
-                          <li>
-                            <form method="post">
-                              <div class="uk-margin">
-                                <div class="uk-inline uk-width-1-1">
-                                  <span class="uk-form-icon" uk-icon="icon: user"></span>
-                                  <input class="uk-input uk-form-large" type="text" placeholder="name" name="email">
-                                </div>
-                              </div>
-                              <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
-                                <span><input class="uk-radio" type="radio" name="radio1">
-                                  <span class="uk-margin-left-small">Male</span>
-                                </span>
-                                <span><input class="uk-radio" type="radio" name="radio1">
-                                  <span class="uk-margin-left-small">Female</span>
-                                </span>
-                              </div>
-                              <div class="uk-margin">
-                                <select class="uk-select">
-                                  <option>Suspected</option>
-                                  <option>Negative</option>
-                                  <option>Active (positive)</option>
-                                  <option>Recovered</option>
-                                  <option>Dead</option>
-                                </select>
-                              </div>
-                              <div class="uk-margin">
-                                <div class="uk-inline uk-width-1-1">
-                                  <span class="uk-form-icon" uk-icon="icon: tag"></span>
-                                  <input class="uk-input uk-form-large" type="text" placeholder="internal reference string (example: HOSP#14232453)" name="ref_str">
-                                </div>
-                              </div>
-                              <div class="uk-margin">
-                                <div class="uk-inline uk-width-1-1">
-                                  <span class="uk-form-icon" uk-icon="icon: tag"></span>
-                                  <input class="uk-input uk-form-large" type="date" name="date">
-                                </div>
-                              </div>
-                              <div class="uk-margin">
-                                <label for="">History/Notes:</label>
-                                <textarea class="uk-textarea" rows="5" placeholder=""></textarea>
-                              </div>
-                              <div class="uk-margin">
-                                <button type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">Add</button>
-                              </div>
-                            </form>
-                          </li>
-                          <li>
-                            <form method="post">
-                              <div class="uk-margin">
-                                <div class="uk-inline uk-width-1-1">
-                                  <span class="uk-form-icon" uk-icon="icon: user"></span>
-                                  <input class="uk-input uk-form-large" type="text" placeholder="record id" name="recordid">
-                                </div>
-                              </div>
-                              <hr>
-                              <div class="uk-margin">
-                                <div class="uk-inline uk-width-1-1">
-                                  <span class="uk-form-icon" uk-icon="icon: user"></span>
-                                  <input class="uk-input uk-form-large" type="text" placeholder="name" name="email">
-                                </div>
-                              </div>
-                              <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
-                                <span><input class="uk-radio" type="radio" name="radio1">Male</span>
-                                <span><input class="uk-radio" type="radio" name="radio1">Female</span>
-                              </div>
-                              <div class="uk-margin">
-                                <select class="uk-select">
-                                  <option>Suspected</option>
-                                  <option>Negative</option>
-                                  <option>Active (positive)</option>
-                                  <option>Recovered</option>
-                                  <option>Dead</option>
-                                </select>
-                              </div>
-                              <div class="uk-margin">
-                                <div class="uk-inline uk-width-1-1">
-                                  <span class="uk-form-icon" uk-icon="icon: tag"></span>
-                                  <input class="uk-input uk-form-large" type="text" placeholder="internal reference string (example: HOSP#14232453)" name="ref_str">
-                                </div>
-                              </div>
-                              <div class="uk-margin">
-                                <label for="">History/Notes:</label>
-                                <textarea class="uk-textarea" rows="5" placeholder=""></textarea>
-                              </div>
-                              <div class="uk-margin">
-                                <button type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">Add</button>
-                              </div>
-                            </form>
-                          </li>
-                          <li>
-                            <form method="post">
-                              <div class="uk-margin">
-                                <div class="uk-inline uk-width-1-1">
-                                  <span class="uk-form-icon" uk-icon="icon: user"></span>
-                                  <input class="uk-input uk-form-large" type="text" placeholder="record id" name="recordid">
-                                </div>
-                              </div>
-                              <div class="uk-margin">
-                                <button type="submit" class="uk-button uk-button-primary uk-label-danger uk-button-large uk-width-1-1">Delete</button>
-                              </div>
-                            </form>
-                          </li>
-                        </ul>
+                <ul id="data-tables" class="uk-switcher uk-margin">
+                  <li>
+                    {% if add_error is defined %}
+                      <div class="uk-alert-danger" uk-alert>
+                          <a class="uk-alert-close" uk-close></a>
+                          <p>{{add_error}}</p>
                       </div>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <div class="uk-card uk-card-default">
-                    <div class="uk-card-header uk-text-large">
-                      Find patients
-                    </div>
-                    <div class="uk-card-body">
-                      <form method="post">
-                        <div class="uk-margin">
-                          <div class="uk-inline uk-width-1-1">
-                            <span class="uk-form-icon" uk-icon="icon: user"></span>
-                            <input class="uk-input uk-form-large" type="text" placeholder="find by name" name="email">
-                          </div>
+                    {% endif %}
+                    <form method="post">
+                      <div class="uk-margin">
+                        <div class="uk-inline uk-width-1-1">
+                          <span class="uk-form-icon" uk-icon="icon: user"></span>
+                          <input class="uk-input uk-form-large" type="text" placeholder="name" name="email">
                         </div>
-                        <div class="uk-text-center">OR</div>
-                        <div class="uk-margin">
-                          <div class="uk-inline uk-width-1-1">
-                            <span class="uk-form-icon" uk-icon="icon: tag"></span>
-                            <input class="uk-input uk-form-large" type="text" placeholder="find by internal reference" name="ref_str">
-                          </div>
+                      </div>
+                      <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
+                        <span><input class="uk-radio" type="radio" name="radio1">
+                          <span class="uk-margin-left-small">Male</span>
+                        </span>
+                        <span><input class="uk-radio" type="radio" name="radio1">
+                          <span class="uk-margin-left-small">Female</span>
+                        </span>
+                      </div>
+                      <div class="uk-margin">
+                        <select class="uk-select">
+                          <option>Suspected</option>
+                          <option>Negative</option>
+                          <option>Active (positive)</option>
+                          <option>Recovered</option>
+                          <option>Dead</option>
+                        </select>
+                      </div>
+                      <div class="uk-margin">
+                        <div class="uk-inline uk-width-1-1">
+                          <span class="uk-form-icon" uk-icon="icon: tag"></span>
+                          <input class="uk-input uk-form-large" type="text" placeholder="internal reference string (example: HOSP#14232453)" name="ref_str">
                         </div>
-                        <div class="uk-margin">
-                          <button type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">Find</button>
+                      </div>
+                      <div class="uk-margin">
+                        <div class="uk-inline uk-width-1-1">
+                          <span class="uk-form-icon" uk-icon="icon: tag"></span>
+                          <input class="uk-input uk-form-large" type="date" name="date">
                         </div>
-                      </form>
+                      </div>
+                      <div class="uk-margin">
+                        <label for="">History/Notes:</label>
+                        <textarea class="uk-textarea" rows="5" placeholder=""></textarea>
+                      </div>
+                      <div class="uk-margin">
+                        <button type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">Add</button>
+                      </div>
+                    </form>
+                  </li>
+                  <li>
+                    {% if edit_error is defined %}
+                      <div class="uk-alert-danger" uk-alert>
+                          <a class="uk-alert-close" uk-close></a>
+                          <p>{{edit_error}}</p>
+                      </div>
+                    {% endif %}
+                    <form method="post">
+                      <div class="uk-margin">
+                        <div class="uk-inline uk-width-1-1">
+                          <span class="uk-form-icon" uk-icon="icon: user"></span>
+                          <input class="uk-input uk-form-large" type="text" placeholder="record id" name="recordid">
+                        </div>
+                        <button class="uk-button uk-button-default uk-margin-top" type="button">FETCH</button>
+                      </div>
                       <hr>
-                      <h3>Results</h3>
-                      <table class="uk-table uk-table-hover uk-table-middle uk-table-divider sortable">
-                        <thead>
-                          <tr>
-                              <th>RecordID</th>
-                              <th>Name</th>
-                              <th>Internal Ref</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                       
-                        </tbody>
-                      </table>
+                      <div class="uk-margin">
+                        <div class="uk-inline uk-width-1-1">
+                          <span class="uk-form-icon" uk-icon="icon: user"></span>
+                          <input class="uk-input uk-form-large" type="text" placeholder="name" name="email">
+                        </div>
+                      </div>
+                      <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
+                        <span><input class="uk-radio" type="radio" name="radio1">Male</span>
+                        <span><input class="uk-radio" type="radio" name="radio1">Female</span>
+                      </div>
+                      <div class="uk-margin">
+                        <select class="uk-select">
+                          <option>Suspected</option>
+                          <option>Negative</option>
+                          <option>Active (positive)</option>
+                          <option>Recovered</option>
+                          <option>Dead</option>
+                        </select>
+                      </div>
+                      <div class="uk-margin">
+                        <div class="uk-inline uk-width-1-1">
+                          <span class="uk-form-icon" uk-icon="icon: tag"></span>
+                          <input class="uk-input uk-form-large" type="text" placeholder="internal reference string (example: HOSP#14232453)" name="ref_str">
+                        </div>
+                      </div>
+                      <div class="uk-margin">
+                        <label for="">History/Notes:</label>
+                        <textarea class="uk-textarea" rows="5" placeholder=""></textarea>
+                      </div>
+                      <div class="uk-margin">
+                        <button type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">Update</button>
+                      </div>
+                    </form>
+                  </li>
+                  <li>
+                    {% if delete_error is defined %}
+                    <div class="uk-alert-danger" uk-alert>
+                        <a class="uk-alert-close" uk-close></a>
+                        <p>{{delete_error}}</p>
                     </div>
-                  </div>
-                </div>  
+                    {% endif %}
+                    <form method="post">
+                      <div class="uk-margin">
+                        <div class="uk-inline uk-width-1-1">
+                          <span class="uk-form-icon" uk-icon="icon: user"></span>
+                          <input class="uk-input uk-form-large" type="text" placeholder="record id" name="recordid">
+                        </div>
+                      </div>
+                      <div class="uk-margin">
+                        <button type="submit" class="uk-button uk-button-primary uk-label-danger uk-button-large uk-width-1-1">Delete</button>
+                      </div>
+                    </form>
+                  </li>
+                </ul>
               </div>
             </div>
+          </div>
         </div>
+        <div>
+          <div class="uk-card uk-card-default">
+            <div class="uk-card-header uk-text-large">
+              Find patients
+            </div>
+            <div class="uk-card-body">
+              <form method="post">
+                <div class="uk-margin">
+                  <div class="uk-inline uk-width-1-1">
+                    <span class="uk-form-icon" uk-icon="icon: user"></span>
+                    <input class="uk-input uk-form-large" type="text" placeholder="find by name" name="name">
+                  </div>
+                </div>
+                <div class="uk-text-center">OR</div>
+                <div class="uk-margin">
+                  <div class="uk-inline uk-width-1-1">
+                    <span class="uk-form-icon" uk-icon="icon: tag"></span>
+                    <input class="uk-input uk-form-large" type="text" placeholder="find by internal reference string" name="ref_str">
+                  </div>
+                </div>
+                <div class="uk-margin">
+                  <button type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">Find</button>
+                </div>
+              </form>
+              <hr>
+              <h3>Results</h3>
+              <table class="uk-table uk-table-hover uk-table-middle uk-table-divider sortable">
+                <thead>
+                  <tr>
+                      <th>RecordID</th>
+                      <th>Name</th>
+                      <th>Internal Ref</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for result in find_results %}
+                  <tr>
+                    <td>{{ result.recordid }}</td>
+                    <td>{{ result.name }}</td>
+                    <td>{{ result.ref }}</td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+              {% if find_results|length == 0 %}
+                  No Results.
+              {% endif %}
+            </div>
+          </div>
+        </div>  
+      </div>
     </div>
 </div>
 <script> 

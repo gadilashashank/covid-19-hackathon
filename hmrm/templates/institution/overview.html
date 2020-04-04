@@ -5,89 +5,88 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
 {% endblock %}
+
+{% block breadcrumb_list %}
+<li><span href=#>Overview</span></li>
+{% endblock %}
+
 {% block right_content %}
-<div id="content">
-    <div class="content-padder content-background">
-        <div class="uk-section-small uk-section-default header">
-            <div class="uk-container uk-container-large">
-                <h1>{{ current_institution.name }}</h1>
-                <p>{{ current_institution.shortname }}</p>
-                <ul class="uk-breadcrumb">
-                    <li><a href="/institution/overview/{{overview_id}}">Overview</a></li>
-                    <li><span href=#>{{ current_institution.shortname }}</span></li>
-                </ul>
+<div class="uk-section-small">
+    <div class="uk-container uk-container-large">
+        <div uk-grid class="uk-child-width-1-1@s uk-child-width-1-2@m uk-child-width-1-5@xl">
+            <div>
+              <div class="uk-card uk-card-default uk-card-body">
+                  <span class="statistics-text">Total</span><br />
+                  <span class="statistics-number">{{ current_institution.cases.active + current_institution.cases.recovered + current_institution.cases.fatal }}</span>
+              </div>
+            </div>
+            <div>
+              <div class="uk-card uk-card-default uk-card-body">
+                  <span class="statistics-text">Suspected</span><br />
+                  <span class="statistics-number">
+                      {{ current_institution.cases.suspected }}
+                      <span class="uk-label uk-label-warning">+{{ current_institution.cases.suspected_increment }}</span>
+                  </span>
+              </div>
+            </div>
+            <div>
+                <div class="uk-card uk-card-default uk-card-body">
+                    <span class="statistics-text">Active Cases</span><br />
+                    <span class="statistics-number">
+                        {{ current_institution.cases.active }}
+                        <span class="uk-label uk-label-warning">+{{ current_institution.cases.active_increment }}</span>
+                    </span>
+                </div>
+            </div>
+            <div>
+              <div class="uk-card uk-card-default uk-card-body">
+                  <span class="statistics-text">Recovered</span><br />
+                  <span class="statistics-number">
+                    {{ current_institution.cases.recovered }}
+                    <span class="uk-label uk-label-success">+{{ current_institution.cases.recovered_increment }}</span>
+                  </span>
+              </div>
+            </div>
+            <div>
+                <div class="uk-card uk-card-default uk-card-body">
+                    <span class="statistics-text">Fatal</span><br/>
+                    <span class="statistics-number">
+                      {{ current_institution.cases.fatal }}
+                      <span class="uk-label uk-label-danger">+{{ current_institution.cases.fatal_increment }}</span>
+                    </span>
+                </div>
             </div>
         </div>
-        <div class="uk-section-small">
-            <div class="uk-container uk-container-large">
-                <h3>Statistics</h3>
-                <div uk-grid class="uk-child-width-1-1@s uk-child-width-1-2@m uk-child-width-1-4@xl">
-                    <div>
-                      <div class="uk-card uk-card-default uk-card-body">
-                          <span class="statistics-text">Total Cases</span><br />
-                          <span class="statistics-number">{{ current_institution.cases.active + current_institution.cases.recovered + current_institution.cases.deaths }}</span>
-                      </div>
-                    </div>  
-                    <div>
-                        <div class="uk-card uk-card-default uk-card-body">
-                            <span class="statistics-text">Active Cases</span><br />
-                            <span class="statistics-number">
-                                {{ current_institution.cases.active }}
-                                <span class="uk-label uk-label-warning">+{{ current_institution.cases.active_increment }}</span>
-                            </span>
-                        </div>
-                    </div>
-                    <div>
-                      <div class="uk-card uk-card-default uk-card-body">
-                          <span class="statistics-text">Recovered</span><br />
-                          <span class="statistics-number">
-                            {{ current_institution.cases.recovered }}
-                            <span class="uk-label uk-label-success">+{{ current_institution.cases.recovered_increment }}</span>
-                          </span>
-                      </div>
-                    </div>
-                    <div>
-                        <div class="uk-card uk-card-default uk-card-body">
-                            <span class="statistics-text">Deaths</span><br/>
-                            <span class="statistics-number">
-                              {{ current_institution.cases.deaths }}
-                              <span class="uk-label uk-label-danger">+{{ current_institution.cases.deaths_increment }}</span>
-                            </span>
-                        </div>
-                    </div>
+        <div uk-grid class="uk-child-width-1-1@s uk-child-width-1-2@l">
+          <div>
+            <div class="uk-card uk-card-default">
+              <div class="uk-card-header">
+                Active
+              </div>
+              <div class="uk-card-body">
+                <canvas id="active_chart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="uk-card uk-card-default">
+                <div class="uk-card-header">
+                Recovered
                 </div>
-                <div uk-grid class="uk-child-width-1-1@s uk-child-width-1-2@l">
-                  <div>
-                    <div class="uk-card uk-card-default">
-                      <div class="uk-card-header">
-                        Active
-                      </div>
-                      <div class="uk-card-body">
-                        <canvas id="active_chart"></canvas>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <div class="uk-card uk-card-default">
-                        <div class="uk-card-header">
-                        Recovered
-                        </div>
-                        <div class="uk-card-body">
-                        <canvas id="recovered_chart"></canvas>
-                        </div>
-                    </div>
-                    </div>
-                    <div>
-                    <div class="uk-card uk-card-default">
-                      <div class="uk-card-header">
-                        Deaths
-                      </div>
-                      <div class="uk-card-body">
-                        <canvas id="death_chart"></canvas>
-                      </div>
-                    </div>
-                    </div>
+                <div class="uk-card-body">
+                <canvas id="recovered_chart"></canvas>
                 </div>
+            </div>
+            </div>
+            <div>
+            <div class="uk-card uk-card-default">
+              <div class="uk-card-header">
+                Fatal
+              </div>
+              <div class="uk-card-body">
+                <canvas id="death_chart"></canvas>
+              </div>
+            </div>
             </div>
         </div>
     </div>
@@ -615,11 +614,11 @@ var forEach = function(object, block, context) {
     }]
   };
 
-  var deaths_data ={
-    labels: Array.apply(null, {length: {{ current_institution.history.deaths|length }}}).map(function(value, index){ return index + 1; }),
+  var fatal_data ={
+    labels: Array.apply(null, {length: {{ current_institution.history.fatal|length }}}).map(function(value, index){ return index + 1; }),
     datasets: [{
-      label: 'deaths',
-      data: {{ current_institution.history.deaths }},
+      label: 'fatal',
+      data: {{ current_institution.history.fatal }},
       backgroundColor: "#ff4d4d",
       borderColor: "#cc0000"
     }]
@@ -667,7 +666,7 @@ var forEach = function(object, block, context) {
   var ctx = document.getElementById("death_chart").getContext('2d');
   var death_chart = new Chart(ctx, {
     type: 'line',
-    data: deaths_data,
+    data: fatal_data,
     options: options
   });
 </script>
