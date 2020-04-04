@@ -16,83 +16,6 @@ db.init_app(app)
 
 bcrypt = Bcrypt(app)
 
-current_entity2 = {
-    "name" : "Hogwarts Hospital",
-    "id" : 1,
-    "shortname" : "HogwartsHsp",
-    "type" : "institution",
-    "patient_capacity" : 1000,
-    "testing_capacity" : 100,
-    "cases" : {
-        "suspected" : 64,
-        "suspected_increment" : 12,
-        "active" : 1432,
-        "active_increment" : 1432 - 1244,
-        "recovered" : 74,
-        "recovered_increment" : 4,
-        "fatal" : 16,
-        "fatal_increment" : 2
-    },
-
-    "history" : {
-        "active" : [62, 109, 450, 683, 892, 1043, 1244, 1432],
-        "recovered" : [4, 8, 12, 24, 44, 67, 70, 74],
-        "fatal" : [0, 0, 0, 1, 6, 12, 14, 16],
-    }
-}
-
-current_entity3 = {
-    "name" : "Hogwarts COVID Camp",
-    "id" : 2,
-    "shortname" : "HogwartsCOVID",
-    "type" : "institution",
-    "patient_capacity" : 100,
-    "testing_capacity" : 100,
-    "cases" : {
-        "suspected" : 64,
-        "suspected_increment" : 12,
-        "active" : 56,
-        "active_increment" : 4,
-        "recovered" : 4,
-        "recovered_increment" : 2,
-        "fatal" : 1,
-        "fatal_increment" : 1
-    },
-
-    "history" : {
-        "active" : [62, 109, 450, 683, 892, 1043, 1244, 1432],
-        "recovered" : [4, 8, 12, 24, 44, 67, 70, 74],
-        "fatal" : [0, 0, 0, 1, 6, 12, 14, 16],
-    }
-}
-
-current_entity4 = {
-    "name" : "Hogwarts Clinic",
-    "id" : 3,
-    "shortname" : "Hogwarts Clinic",
-    "type" : "institution",
-    "patient_capacity" : 100,
-    "testing_capacity" : 100,
-    "cases" : {
-        "suspected" : 64,
-        "suspected_increment" : 12,
-        "active" : 82,
-        "active_increment" : 4,
-        "recovered" : 14,
-        "recovered_increment" : 2,
-        "fatal" : 7,
-        "fatal_increment" : 1
-    },
-
-    "history" : {
-        "active" : [62, 109, 450, 683, 892, 1043, 1244, 1432],
-        "recovered" : [4, 8, 12, 24, 44, 67, 70, 74],
-        "fatal" : [0, 0, 0, 1, 6, 12, 14, 16],
-    }
-}
-
-current_objects = [current_entity2, current_entity3, current_entity4]
-
 # decorator for requiring login to access a page
 def login_required(f):
     @functools.wraps(f)
@@ -271,22 +194,22 @@ def institution_create():
 def get_institution_entity(id):
     hospital = db.session.query(Hospital).filter(Hospital.hospital_id == id).first()
 
-    dead_patients = db.session.query(Patient).filter(Patient.patient_id == id, Patient.condition == "DEAD").sum()
-    suspected_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "SUSPECTED").sum()
-    recovered_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "RECOVERED").sum()
-    active_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "ACTIVE").sum()
+    # dead_patients = db.session.query(Patient).filter(Patient.patient_id == id, Patient.condition == "DEAD").sum()
+    # suspected_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "SUSPECTED").sum()
+    # recovered_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "RECOVERED").sum()
+    # active_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "ACTIVE").sum()
 
-    history = db.session.query(History).filter(History.id == id).order_by(date).all()
+    # history = db.session.query(History).filter(History.id == id).order_by(date).all()
 
     suspected = []
     active = []
     recovered = []
     fatal = []
-    for i in history:
-        suspected.append(i.suspected)
-        active.append(i.active)
-        recovered.append(i.recovered)
-        fatal.append(i.fatal)
+    # for i in history:
+    #     suspected.append(i.suspected)
+    #     active.append(i.active)
+    #     recovered.append(i.recovered)
+    #     fatal.append(i.fatal)
 
     suspected_increment = 0
     active_increment = 0
@@ -318,20 +241,31 @@ def get_institution_entity(id):
         "patient_capacity" : hospital.patient_capacity,
         "testing_capacity" : hospital.testing_capacity,
         "cases": {
-            "suspected": suspected_patients,
-            "suspected_increment": suspected_increment,
-            "active": active_patients,
-            "active_increment": active_increment,
-            "recovered": recovered_patients,
-            "recovered_increment": recovered_increment,
-            "fatal": dead_patients,
-            "fatal_increment": fatal_increment            
+            "suspected" : 64,
+            "suspected_increment" : 12,
+            "active" : 1432,
+            "active_increment" : 1432 - 1244,
+            "recovered" : 74,
+            "recovered_increment" : 4,
+            "fatal" : 16,
+            "fatal_increment" : 2
+            # "suspected": suspected_patients,
+            # "suspected_increment": suspected_increment,
+            # "active": active_patients,
+            # "active_increment": active_increment,
+            # "recovered": recovered_patients,
+            # "recovered_increment": recovered_increment,
+            # "fatal": dead_patients,
+            # "fatal_increment": fatal_increment            
         },
 
         "history": {
-            "active": active,
-            "recovered": recovered,
-            "fatal": fatal
+            "active" : [62, 109, 450, 683, 892, 1043, 1244, 1432],
+            "recovered" : [4, 8, 12, 24, 44, 67, 70, 74],
+            "fatal" : [0, 0, 0, 1, 6, 12, 14, 16],
+            # "active": active,
+            # "recovered": recovered,
+            # "fatal": fatal
         }
     }
 
@@ -382,6 +316,11 @@ def institution_records_patients(id):
 
 def get_administration_entity(id):
     administration = db.session.query(Administration).filter(Administration.doff_id == id).first()
+
+    current_objects = []
+    institutions = db.session.query(Hospital).all()
+    for institution in institutions:
+        current_objects.append(get_institution_entity(institution.hospital_id))
 
     entity = {
         "id" : administration.doff_id,
