@@ -211,10 +211,10 @@ def user_register():
             db.session.add(user_add)
             db.session.commit()
 
-            session['name'] = user_check.fname + ' ' + user_check.lname                
-            session['first_name'] = user_check.fname
-            session['last_name'] = user_check.lname
-            session['email'] = user_check.email
+            session['name'] = user_add.fname + ' ' + user_add.lname                
+            session['first_name'] = user_add.fname
+            session['last_name'] = user_add.lname
+            session['email'] = user_add.email
             session['is_authenticated'] = True         
             return index()
 
