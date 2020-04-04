@@ -20,16 +20,22 @@
         </center>
         <ul class="uk-nav uk-nav-default">    
             <li class="uk-nav-header">General</li>
-            <li><a href="">Discussion Forum</a></li>
-            <li><a href="">Administration</a></li>
-            <li><a href="">Members</a></li>
-    
-            <li class="uk-nav-header">Statistics</li>
-            <li><a href="">Patient Statistics</a></li>
-            <li><a href="">Supply-demand Statistics</a></li>
-            <li><a href="">Qurantine Information</a></li>
+            <li><a href="/administration/{{current_admin.id}}/overview">Overview</a></li>
+            <li><a href="/administration/{{current_admin.id}}/members">Members</a></li>
         </ul>
     </div>
-    {% block right_content %}{% endblock %}
+    <div class="content-padder content-background">
+        <div class="uk-section-small uk-section-default header">
+            <div class="uk-container uk-container-large">
+                <h1>{{ current_admin.name }}</h1>
+                <p>{{ current_admin.shortname }}</p>
+                <ul class="uk-breadcrumb">
+                    <li><a href="/administration/{{current_admin.id}}/overview/">Overview</a></li>
+                    {% block breadcrumb_list %}{% endblock %}
+                </ul>
+            </div>
+        </div>
+        {% block right_content %}{% endblock %}
+    </div>
 </div>
 {% endblock %}

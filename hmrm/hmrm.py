@@ -38,8 +38,15 @@ current_user = {
 current_entity = {
     "name" : "Hogwarts",
     "id" : 0,
+    "email_admin" : "admin@hogwarts.med",
+    "email_lab" : "lab@hogwarts.med",
+    "phone_admin" : 987654321,
+    "phone_lab" : 987654321,
+    "address" : "hogwarts",
     "shortname" : "Hogwarts",
     "type" : "admnistration",
+    "patient_capacity" : 100,
+    "testing_capacity" : 100,
     "cases" : {
         "suspected" : 64,
         "suspected_increment" : 12,
@@ -63,7 +70,8 @@ current_entity2 = {
     "id" : 1,
     "shortname" : "HogwartsHsp",
     "type" : "institution",
-    "capacity" : 1000,
+    "patient_capacity" : 1000,
+    "testing_capacity" : 100,
     "cases" : {
         "suspected" : 64,
         "suspected_increment" : 12,
@@ -87,7 +95,8 @@ current_entity3 = {
     "id" : 2,
     "shortname" : "HogwartsCOVID",
     "type" : "institution",
-    "capacity" : 1000,
+    "patient_capacity" : 100,
+    "testing_capacity" : 100,
     "cases" : {
         "suspected" : 64,
         "suspected_increment" : 12,
@@ -111,7 +120,8 @@ current_entity4 = {
     "id" : 3,
     "shortname" : "Hogwarts Clinic",
     "type" : "institution",
-    "capacity" : 100,
+    "patient_capacity" : 100,
+    "testing_capacity" : 100,
     "cases" : {
         "suspected" : 64,
         "suspected_increment" : 12,
@@ -133,6 +143,7 @@ current_entity4 = {
 current_objects = [current_entity2, current_entity3, current_entity4]
 current_admin = {
     "name" : "Hogwarts City",
+    "id" : 0,
     "shortname" : "HogwartsCity",
     "type" : "admnistration",
     "cases" : {
@@ -416,9 +427,25 @@ def administration_create():
 @app.route("/administration/<int:id>/overview/")
 @login_required
 def administration_overview(id):
-    return render_template("administration/overview.html", overview_id = int(id), current_user = current_user, current_admin = current_admin)
+    return render_template("administration/overview.html", current_user = current_user, current_admin = current_admin)
 
-@app.route("/administration/view/<int:id>")
+@app.route("/administration/<int:id>/members")
 @login_required
-def administration_view(id):
-    pass
+def administration_members(id):
+    invitations = [{
+      "name" : "Hermi",
+      "userid" : 12,
+      "created" : "04 April 2020 17:24 IST",
+    },
+    {
+      "name" : "Albus Dumbledore",
+      "userid" : 15,
+      "created" : "04 April 2020 18:34 IST",
+    }]
+    return render_template("administration/members.html", current_user = current_user, current_admin = current_admin, invitations = invitations)
+
+@app.route("/administration/<int:admin_id>/view/<int:view_id>")
+@login_required
+def administration_view(admin_id, view_id):
+    return render_template("administration/view.html", current_user = current_user, current_entity = current_entity, current_admin = current_admin)
+

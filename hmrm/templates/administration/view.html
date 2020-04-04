@@ -1,91 +1,111 @@
 {% extends '/administration/base.html' %}
 
 {% block head %}
-<link rel="stylesheet" href="/css/administration/view.css" />
+<link rel="stylesheet" href="/static/css/administration/base.css" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
 {% endblock %}
+
+{% block breadcrumb_list %}
+<li><span href=#>{{ current_entity.shortname }}</span></li>
+{% endblock %}
+
 {% block right_content %}
-<div id="content">
-    <div class="content-padder content-background">
-        <div class="uk-section-small uk-section-default header">
-            <div class="uk-container uk-container-large">
-                <h1>{{ current_entity.name }}</h1>
-                <p>{{ current_entity.shortname }}</p>
-                <ul class="uk-breadcrumb">
-                    <li><a href="/administration/overview{{overview_id}}">Overview</a></li>
-                    <li><span href="/administration/view/{{view_id}}">{{ current_entity.shortname }}</span></li>
-                </ul>
+<div class="uk-section-small">
+    <div class="uk-container uk-container-large">
+        <div class="uk-margin uk-card uk-card-default">
+            <div class="uk-card-body">
+              <div class="uk-grid-match uk-child-width-1-2@m" uk-grid>
+                <div>
+                  <ul class="uk-list">
+                    <li><label class="uk-text-bold">Email (administrative):</label>&nbsp;<a href="mailto:{{ current_entity.email_admin }}">{{ current_entity.email_admin }}</a></li>
+                    <li><label class="uk-text-bold">Phone (administrative):</label>&nbsp;{{ current_entity.phone_admin }}</li>
+                    <li><label class="uk-text-bold">Patient Capacity:</label>&nbsp;{{ current_entity.patient_capacity }}</li>
+                    <br>
+                    <li><label class="uk-text-bold">Email (lab):</label>&nbsp;<a href="mailto:{{ current_entity.email_lab }}">{{ current_entity.email_lab }}</a></li>
+                    <li><label class="uk-text-bold">Phone (lab):</label>&nbsp;{{ current_entity.phone_lab }}</li>
+                    <li><label class="uk-text-bold">Testing Capacity:</label>{{ current_entity.testing_capacity }}</li>
+                  </ul>
+                </div>
+                <div>
+                  <li><label class="uk-text-bold">Address:</label> {{ current_entity.address }}</li>
+                </div>
+              </div>
             </div>
         </div>
-        <div class="uk-section-small">
-            <div class="uk-container uk-container-large">
-                <div uk-grid class="uk-child-width-1-1@s uk-child-width-1-2@m uk-child-width-1-4@xl">
-                    <div>
-                      <div class="uk-card uk-card-default uk-card-body">
-                          <span class="statistics-text">Total Cases</span><br />
-                          <span class="statistics-number">{{ current_entity.cases.active + current_entity.cases.recovered + current_entity.cases.fatal }}</span>
-                      </div>
-                    </div>  
-                    <div>
-                        <div class="uk-card uk-card-default uk-card-body">
-                            <span class="statistics-text">Active Cases</span><br />
-                            <span class="statistics-number">
-                                {{ current_entity.cases.active }}
-                                <span class="uk-label uk-label-warning">+{{ current_entity.cases.active_increment }}</span>
-                            </span>
-                        </div>
-                    </div>
-                    <div>
-                      <div class="uk-card uk-card-default uk-card-body">
-                          <span class="statistics-text">Recovered</span><br />
-                          <span class="statistics-number">
-                            {{ current_entity.cases.recovered }}
-                            <span class="uk-label uk-label-success">+{{ current_entity.cases.recovered_increment }}</span>
-                          </span>
-                      </div>
-                    </div>
-                    <div>
-                        <div class="uk-card uk-card-default uk-card-body">
-                            <span class="statistics-text">Fatal</span><br/>
-                            <span class="statistics-number">
-                              {{ current_entity.cases.fatal }}
-                              <span class="uk-label uk-label-danger">+{{ current_entity.cases.fatal_increment }}</span>
-                            </span>
-                        </div>
-                    </div>
+        <div uk-grid class="uk-margin-medium-top uk-child-width-1-1@s uk-child-width-1-2@m uk-child-width-1-5@xl">
+            <div>
+              <div class="uk-card uk-card-default uk-card-body">
+                  <span class="statistics-text">Total</span><br />
+                  <span class="statistics-number">{{ current_entity.cases.active + current_entity.cases.recovered + current_entity.cases.fatal }}</span>
+              </div>
+            </div>  
+            <div>
+              <div class="uk-card uk-card-default uk-card-body">
+                  <span class="statistics-text">Suspected</span><br />
+                  <span class="statistics-number">
+                      {{ current_entity.cases.suspected }}
+                      <span class="uk-label uk-label-warning">+{{ current_entity.cases.suspected_increment }}</span>
+                  </span>
+              </div>
+          </div>
+            <div>
+                <div class="uk-card uk-card-default uk-card-body">
+                    <span class="statistics-text">Active</span><br />
+                    <span class="statistics-number">
+                        {{ current_entity.cases.active }}
+                        <span class="uk-label uk-label-warning">+{{ current_entity.cases.active_increment }}</span>
+                    </span>
                 </div>
-              <div uk-grid class="uk-child-width-1-1@s uk-child-width-1-2@l">
-                <div>
-                  <div class="uk-card uk-card-default">
-                    <div class="uk-card-header">
-                      Active
-                    </div>
-                    <div class="uk-card-body">
-                      <canvas id="active_chart"></canvas>
-                    </div>
-                  </div>
+            </div>
+            <div>
+              <div class="uk-card uk-card-default uk-card-body">
+                  <span class="statistics-text">Recovered</span><br />
+                  <span class="statistics-number">
+                    {{ current_entity.cases.recovered }}
+                    <span class="uk-label uk-label-success">+{{ current_entity.cases.recovered_increment }}</span>
+                  </span>
+              </div>
+            </div>
+            <div>
+                <div class="uk-card uk-card-default uk-card-body">
+                    <span class="statistics-text">Fatal</span><br/>
+                    <span class="statistics-number">
+                      {{ current_entity.cases.fatal }}
+                      <span class="uk-label uk-label-danger">+{{ current_entity.cases.fatal_increment }}</span>
+                    </span>
                 </div>
-                <div>
-                  <div class="uk-card uk-card-default">
-                    <div class="uk-card-header">
-                      Recovered
-                    </div>
-                    <div class="uk-card-body">
-                      <canvas id="recovered_chart"></canvas>
-                    </div>
-                  </div>
+            </div>
+        </div>
+        <div uk-grid class="uk-child-width-1-1@s uk-child-width-1-2@l">
+          <div>
+            <div class="uk-card uk-card-default">
+              <div class="uk-card-header">
+                Active
+              </div>
+              <div class="uk-card-body">
+                <canvas id="active_chart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="uk-card uk-card-default">
+              <div class="uk-card-header">
+                Recovered
+              </div>
+              <div class="uk-card-body">
+                <canvas id="recovered_chart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div>
+              <div class="uk-card uk-card-default">
+                <div class="uk-card-header">
+                  Fatal
                 </div>
-                <div>
-                    <div class="uk-card uk-card-default">
-                      <div class="uk-card-header">
-                        Fatal
-                      </div>
-                      <div class="uk-card-body">
-                        <canvas id="death_chart"></canvas>
-                      </div>
-                    </div>
-                  </div>
+                <div class="uk-card-body">
+                  <canvas id="death_chart"></canvas>
+                </div>
               </div>
             </div>
         </div>
