@@ -8,6 +8,7 @@ from hmrm.models import db, Users
 # app = Blueprint("hmrm", __name__, static_folder="static/")
 app = Flask(__name__)
 
+db.init_app(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 
@@ -127,7 +128,7 @@ def user_register():
             # Add user.
             user_add = Users(
                 request.form['fname'], request.form['lname'],
-                request.form['email'], hashed)
+                request.form['username'], hashed)
 
             db.session.add(user_add)
             db.session.commit()
