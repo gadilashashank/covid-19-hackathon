@@ -141,9 +141,29 @@ current_admin = {
         "recovered" : [4, 8, 12, 24, 44, 67, 70, 74],
         "deaths" : [0, 0, 0, 1, 6, 12, 14, 16],
     },
-
-    "objects" : current_objects
 }
+
+current_institution = {
+    "name" : "Hogwarts Central Hospital",
+    "id" : 1,
+    "shortname" : "HogwartsCentral",
+    "type" : "institution",
+    "cases" : {
+        "active" : 1432,
+        "active_increment" : 1432 - 1244,
+        "recovered" : 74,
+        "recovered_increment" : 4,
+        "deaths" : 16,
+        "deaths_increment" : 2 
+    },
+
+    "history" : {
+        "active" : [62, 109, 450, 683, 892, 1043, 1244, 1432],
+        "recovered" : [4, 8, 12, 24, 44, 67, 70, 74],
+        "deaths" : [0, 0, 0, 1, 6, 12, 14, 16],
+    },
+}
+
 
 # decorator for requiring login to access a page
 def login_required(f):
@@ -254,12 +274,22 @@ def user_dashboards():
 def institution_create():
     return render_template("institution/create.html", current_user=current_user)
 
+@app.route("/institution/<int:id>/overview")
+@login_required
+def institution_overview(id):
+    return render_template("institution/overview.html", current_user = current_user, current_institution = current_institution)
+
+@app.route("/institution/<int:id>/records/patients")
+@login_required
+def institution_records_patients(id):
+    return render_template("institution/records/patients.html", current_user = current_user, current_institution = current_institution)
+
 @app.route("/administration/create")
 @login_required
 def administration_create():
     return render_template("administration/create.html", current_user=current_user)
 
-@app.route("/administration/overview/<int:id>")
+@app.route("/administration/<int:id>/overview/")
 @login_required
 def administration_overview(id):
     return render_template("administration/overview.html", overview_id = int(id), current_user = current_user, current_admin = current_admin)

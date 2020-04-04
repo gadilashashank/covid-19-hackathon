@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block head %}
-<link rel="stylesheet" href="/css/administration/base.css" />
+<link rel="stylesheet" href="/css/institution/base.css"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
 {% endblock %}
@@ -20,14 +20,12 @@
         </center>
         <ul class="uk-nav uk-nav-default">    
             <li class="uk-nav-header">General</li>
-            <li><a href="">Discussion Forum</a></li>
+            <li><a href="/institution/{{ current_institution.id }}/overview">Overview</a></li>
             <li><a href="">Administration</a></li>
             <li><a href="">Members</a></li>
     
-            <li class="uk-nav-header">Statistics</li>
-            <li><a href="">Patient Statistics</a></li>
-            <li><a href="">Supply-demand Statistics</a></li>
-            <li><a href="">Qurantine Information</a></li>
+            <li class="uk-nav-header">Records</li>
+            <li><a href="/institution/{{ current_institution.id }}/records/patients">Patient Records</a></li>
         </ul>
     </div>
     {% block right_content %}{% endblock %}

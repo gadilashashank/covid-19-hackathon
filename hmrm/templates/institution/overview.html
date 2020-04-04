@@ -1,7 +1,7 @@
-{% extends '/administration/base.html' %}
+{% extends '/institution/base.html' %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/css/administration/base.css" />
+<link rel="stylesheet" href="/static/css/institution/base.css" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
 {% endblock %}
@@ -10,30 +10,30 @@
     <div class="content-padder content-background">
         <div class="uk-section-small uk-section-default header">
             <div class="uk-container uk-container-large">
-                <h1>{{ current_admin.name }}</h1>
-                <p>{{ current_admin.shortname }}</p>
+                <h1>{{ current_institution.name }}</h1>
+                <p>{{ current_institution.shortname }}</p>
                 <ul class="uk-breadcrumb">
-                    <li><a href="/administration/overview/{{overview_id}}">Overview</a></li>
-                    <li><span href=#>{{ current_admin.shortname }}</span></li>
+                    <li><a href="/institution/overview/{{overview_id}}">Overview</a></li>
+                    <li><span href=#>{{ current_institution.shortname }}</span></li>
                 </ul>
             </div>
         </div>
         <div class="uk-section-small">
             <div class="uk-container uk-container-large">
-                <h3>Jurisdiction Aggregate</h3>
+                <h3>Statistics</h3>
                 <div uk-grid class="uk-child-width-1-1@s uk-child-width-1-2@m uk-child-width-1-4@xl">
                     <div>
                       <div class="uk-card uk-card-default uk-card-body">
                           <span class="statistics-text">Total Cases</span><br />
-                          <span class="statistics-number">{{ current_admin.cases.active + current_admin.cases.recovered + current_admin.cases.deaths }}</span>
+                          <span class="statistics-number">{{ current_institution.cases.active + current_institution.cases.recovered + current_institution.cases.deaths }}</span>
                       </div>
                     </div>  
                     <div>
                         <div class="uk-card uk-card-default uk-card-body">
                             <span class="statistics-text">Active Cases</span><br />
                             <span class="statistics-number">
-                                {{ current_admin.cases.active }}
-                                <span class="uk-label uk-label-warning">+{{ current_admin.cases.active_increment }}</span>
+                                {{ current_institution.cases.active }}
+                                <span class="uk-label uk-label-warning">+{{ current_institution.cases.active_increment }}</span>
                             </span>
                         </div>
                     </div>
@@ -41,8 +41,8 @@
                       <div class="uk-card uk-card-default uk-card-body">
                           <span class="statistics-text">Recovered</span><br />
                           <span class="statistics-number">
-                            {{ current_admin.cases.recovered }}
-                            <span class="uk-label uk-label-success">+{{ current_admin.cases.recovered_increment }}</span>
+                            {{ current_institution.cases.recovered }}
+                            <span class="uk-label uk-label-success">+{{ current_institution.cases.recovered_increment }}</span>
                           </span>
                       </div>
                     </div>
@@ -50,24 +50,24 @@
                         <div class="uk-card uk-card-default uk-card-body">
                             <span class="statistics-text">Deaths</span><br/>
                             <span class="statistics-number">
-                              {{ current_admin.cases.deaths }}
-                              <span class="uk-label uk-label-danger">+{{ current_admin.cases.deaths_increment }}</span>
+                              {{ current_institution.cases.deaths }}
+                              <span class="uk-label uk-label-danger">+{{ current_institution.cases.deaths_increment }}</span>
                             </span>
                         </div>
                     </div>
                 </div>
                 <div uk-grid class="uk-child-width-1-1@s uk-child-width-1-2@l">
-                    <div>
+                  <div>
                     <div class="uk-card uk-card-default">
-                        <div class="uk-card-header">
+                      <div class="uk-card-header">
                         Active
-                        </div>
-                        <div class="uk-card-body">
+                      </div>
+                      <div class="uk-card-body">
                         <canvas id="active_chart"></canvas>
-                        </div>
+                      </div>
                     </div>
-                    </div>
-                    <div>
+                  </div>
+                  <div>
                     <div class="uk-card uk-card-default">
                         <div class="uk-card-header">
                         Recovered
@@ -87,72 +87,6 @@
                       </div>
                     </div>
                     </div>
-                </div>
-
-                <h3>Jurisdiction Memebers</h3>
-                <div class="uk-padding uk-margin uk-background-default">
-                    <ul class="uk-tab" data-uk-tab="{connect:'#data-tables'}">
-                        <li class="uk-active"><a href="">CASE DISTRIBUTION</a></li>
-                        <li><a href="">CAPACITY STRESS</a></li>
-                      </ul>
-                      <ul id="data-tables" class="uk-switcher uk-margin">
-                        <li>
-                            <table class="uk-table uk-table-hover uk-table-middle uk-table-divider sortable">
-                                <thead>
-                                    <tr>
-                                        <th>Institution</th>
-                                        <th>Active</th>
-                                        <th>Recovered</th>
-                                        <th>Deaths</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for obj in current_admin.objects %}
-                                    <tr>
-                                        <td><a href="/administration/view/{{obj.id}}">{{ obj.name }}</a></td>
-                                        <td>{{ obj.cases.active }} (+{{obj.cases.active_increment}})</td>
-                                        <td>{{ obj.cases.recovered }} (+{{obj.cases.recovered_increment}})</td>
-                                        <td>{{ obj.cases.deaths }} (+{{obj.cases.deaths_increment}})</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                                {% if current_admin.objects|length == 0 %}
-                                You are not following any institution/administrations. 
-                                {% endif %}
-                            </table>
-                        </li>
-                        <li>
-                            <table class="uk-table uk-table-middle uk-table-divider sortable">
-                                <thead>
-                                    <tr>
-                                        <th>Institution</th>
-                                        <th>Capacity</th>
-                                        <th>Active Cases</th>
-                                        <th>In Use</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for obj in current_admin.objects %}
-                                    {% if obj.capacity < obj.cases.active %}
-                                    <tr class="uk-label-danger">
-                                    {% elif obj.capacity > obj.cases.active and obj.cases.active > 0.8 * obj.capacity %}
-                                    <tr class="uk-label-warning">
-                                    {% else %}
-                                    <tr>
-                                    {% endif %}
-                                        <td><a href="/administration/view/{{obj.id}}">{{ obj.name }}</a></td>
-                                        <td>{{ obj.capacity }}</td>
-                                        <td>{{ obj.cases.active }}</td>
-                                        <td>{{ (obj.cases.active / obj.capacity * 100)|round|int }}%</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                                {% if current_admin.objects|length == 0 %}
-                                You are not following any institution/administrations. 
-                                {% endif %}
-                            </table>
-                        </li>
-                      </ul>
                 </div>
             </div>
         </div>
@@ -662,30 +596,30 @@ var forEach = function(object, block, context) {
   });
 
   var active_data ={
-    labels: Array.apply(null, {length: {{ current_admin.history.active|length }}}).map(function(value, index){ return index + 1; }),
+    labels: Array.apply(null, {length: {{ current_institution.history.active|length }}}).map(function(value, index){ return index + 1; }),
     datasets: [{
       label: 'active',
-      data: {{ current_admin.history.active }},
+      data: {{ current_institution.history.active }},
       backgroundColor: "#fcce03",
       borderColor: "#fca903"
     }]
   };
 
   var recovered_data ={
-    labels: Array.apply(null, {length: {{ current_admin.history.recovered|length }}}).map(function(value, index){ return index + 1; }),
+    labels: Array.apply(null, {length: {{ current_institution.history.recovered|length }}}).map(function(value, index){ return index + 1; }),
     datasets: [{
       label: 'recovered',
-      data: {{ current_admin.history.recovered }},
+      data: {{ current_institution.history.recovered }},
       backgroundColor: "#00cc44",
       borderColor: "#009933"
     }]
   };
 
   var deaths_data ={
-    labels: Array.apply(null, {length: {{ current_admin.history.deaths|length }}}).map(function(value, index){ return index + 1; }),
+    labels: Array.apply(null, {length: {{ current_institution.history.deaths|length }}}).map(function(value, index){ return index + 1; }),
     datasets: [{
       label: 'deaths',
-      data: {{ current_admin.history.deaths }},
+      data: {{ current_institution.history.deaths }},
       backgroundColor: "#ff4d4d",
       borderColor: "#cc0000"
     }]

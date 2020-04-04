@@ -37,7 +37,7 @@
                 {% for board in current_user.dashboards %}
                 <li data-color="{{ board.type }}">
                     <div class="uk-card uk-card-default uk-card-body">
-                        <a href="/{{ board.type }}/overview/{{board.id}}"><h3 class="uk-card-title">{{ board.name }}</h3></a>
+                        <a href="/{{ board.type }}/{{board.id}}/overview"><h3 class="uk-card-title">{{ board.name }}</h3></a>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                         {% if board.type == "administration" %}
                         <div class="uk-card-badge uk-label uk-label-success">ADMINISTRATION</div>
