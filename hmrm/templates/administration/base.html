@@ -28,9 +28,8 @@
         <div class="uk-section-small uk-section-default header">
             <div class="uk-container uk-container-large">
                 <h1>{{ current_admin.name }}</h1>
-                <p>{{ current_admin.shortname }}</p>
                 <ul class="uk-breadcrumb">
-                    <li><a href="/administration/{{current_admin.id}}/overview/">Overview</a></li>
+                    <li><a href="/administration/{{ current_admin.id }}/overview">{{current_admin.shortname}}</a></li>
                     {% block breadcrumb_list %}{% endblock %}
                 </ul>
             </div>

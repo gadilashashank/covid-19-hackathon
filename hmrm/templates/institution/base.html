@@ -22,7 +22,7 @@
             <li class="uk-nav-header">General</li>
             <li><a href="/institution/{{ current_institution.id }}/overview">Overview</a></li>
             <li><a href="/institution/{{ current_institution.id }}/members">Members</a></li>
-            <li><a href="/institution/{{ current_institution.id }}/information">Information</a></li>
+            <li><a href="/institution/{{ current_institution.id }}/information">Edit Information</a></li>
             <li class="uk-nav-header">Records</li>
             <li><a href="/institution/{{ current_institution.id }}/records/patients">Patient Records</a></li>
         </ul>
@@ -32,7 +32,6 @@
             <div class="uk-section-small uk-section-default header">
                 <div class="uk-container uk-container-large">
                     <h1>{{ current_institution.name }}</h1>
-                    <p>{{ current_institution.shortname }}</p>
                     <ul class="uk-breadcrumb">
                         <li><a href="/institution/{{ current_institution.id }}/overview">{{current_institution.shortname}}</a></li>
                         {% block breadcrumb_list %}{% endblock %}

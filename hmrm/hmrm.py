@@ -173,6 +173,7 @@ def user_login():
 
             if stored is not None and bcrypt.check_password_hash(stored, password):
                 user_check = db.session.query(Users).filter_by(email=request.form['email']).scalar()
+                session['userid'] = user_check.user_id
                 session['name'] = user_check.fname + ' ' + user_check.lname
                 session['first_name'] = user_check.fname
                 session['last_name'] = user_check.lname
@@ -207,6 +208,7 @@ def user_register():
             db.session.add(user_add)
             db.session.commit()
 
+            session['userid'] = user_check.user_id
             session['name'] = user_add.fname + ' ' + user_add.lname
             session['first_name'] = user_add.fname
             session['last_name'] = user_add.lname
@@ -297,9 +299,7 @@ def institution_create():
         return jsonify({"status": "success"})
     return render_template("institution/create.html")
 
-@app.route("/institution/<int:id>/overview")
-# @login_required
-def institution_overview(id):
+def get_institution_entity(id):
     hospital = db.session.query(Hospital).filter(Hospital.id == id).first()
 
     dead_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "DEAD").sum()
@@ -309,22 +309,54 @@ def institution_overview(id):
 
     history = db.session.query(History).filter(History.id == id).order_by(date).all()
 
+    suspected = []
     active = []
     recovered = []
     fatal = []
     for i in history:
+        suspected.append(i.suspected)
         active.append(i.active)
         recovered.append(i.recovered)
         fatal.append(i.fatal)
 
+    suspected_increment = 0
+    active_increment = 0
+    recovered_increment = 0
+    fatal_increment = 0
+
+    if len(suspected) > 1:
+        suspected_increment = suspected[-1] - suspected[-2]
+
+    if len(active) > 1:
+        active_increment = active[-1] - active[-2]
+
+    if len(recovered) > 1:
+        recovered_increment = recovered[-1] - recovered[-2]
+
+    if len(suspected) > 1:
+        fatal_increment = fatal[-1] - fatal[-2]
+        
     entity = {
         "name": hospital.name,
+        "shortname" : hospital.sname,
         "id": hospital.id,
+        "email_admin" : hospital.email_admin,
+        "email_lab" : hospital.email_lab,
+        "phone_admin" : hospital.phone_admin,
+        "phone_lab" : hospital.phone_lab,
+        "address" : hospital.address,
+        "type" : "institution",
+        "patient_capacity" : hospital.max_bed,
+        "testing_capacity" : hospital.testing_capacity,
         "cases": {
+            "suspected": suspected_patients,
+            "suspected_increment": suspected_increment,
             "active": active_patients,
+            "active_increment": active_increment,
             "recovered": recovered_patients,
+            "recovered_increment": recovered_increment,
             "fatal": dead_patients,
-            "suspected": suspected_patients
+            "fatal_increment": fatal_increment            
         },
 
         "history": {
@@ -333,7 +365,13 @@ def institution_overview(id):
             "fatal": fatal
         }
     }
-    return render_template("institution/overview.html", current_institution = entity)
+
+    return entity
+
+@app.route("/institution/<int:id>/overview")
+@login_required
+def institution_overview(id):
+    return render_template("institution/overview.html", current_institution = get_institution_entity(id))
 
 @app.route("/institution/<int:id>/members")
 @login_required
@@ -353,20 +391,7 @@ def institution_members(id):
 @app.route("/institution/<int:id>/information")
 @login_required
 def institution_information(id):
-    contact_info = {
-        "phone_admin" : 987654321,
-        "phone_lab" :   989762343,
-        "email_admin" : "admin@hogwarts.med",
-        "email_lab" : "lab@hogwarts.med",
-        "address" : "hogwarts"
-    }
-
-    capacity_info = {
-        "patient_capacity" : 1000,
-        "testing_capacity" : 0,
-    }
-
-    return render_template("institution/information.html", current_institution = current_institution, capacity_info = capacity_info, contact_info = contact_info)
+    return render_template("institution/information.html", current_institution = get_institution_entity(id))
 
 @app.route("/institution/<int:id>/records/patients")
 @login_required
@@ -414,34 +439,5 @@ def administration_members(id):
 @app.route("/administration/<int:admin_id>/view/<int:view_id>")
 @login_required
 def administration_view(admin_id, view_id):
-    current_entity = {
-        "name" : "Hogwarts",
-        "id" : 0,
-        "email_admin" : "admin@hogwarts.med",
-        "email_lab" : "lab@hogwarts.med",
-        "phone_admin" : 987654321,
-        "phone_lab" : 987654321,
-        "address" : "hogwarts",
-        "shortname" : "Hogwarts",
-        "type" : "institution",
-        "patient_capacity" : 100,
-        "testing_capacity" : 100,
-        "cases" : {
-            "suspected" : 64,
-            "suspected_increment" : 12,
-            "active" : 1432,
-            "active_increment" : 1432 - 1244,
-            "recovered" : 74,
-            "recovered_increment" : 4,
-            "fatal" : 16,
-            "fatal_increment" : 2
-        },
-
-        "history": {
-            "active": [62, 109, 450, 683, 892, 1043, 1244, 1432],
-            "recovered": [4, 8, 12, 24, 44, 67, 70, 74],
-            "fatal": [0, 0, 0, 1, 6, 12, 14, 16],
-        }
-    }
-    return render_template("administration/view.html", current_entity = current_entity, current_admin = current_admin)
+    return render_template("administration/view.html", current_entity = get_institution_entity(view_id), current_admin = current_admin)
 
