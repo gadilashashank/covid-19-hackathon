@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block content %}
+<div id="content" class="uk-container">
+    <h1>Notifications</h1>
+    <div class="uk-container uk-container-large">
+        <div class="uk-card uk-card-default">
+            <div class="uk-card-body">
+                <h3>Invitations</h3>
+                <table class="uk-table uk-table-middle uk-table-divider">
+                    <thead>
+                        <tr>
+                            <th>Dashboard</th>
+                            <th>Type</th>
+                            <th>Invited on</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for invite in invitations %}
+                        <tr>
+                            <td>{{ invite.dashboard_name }}</td>
+
+                            {% if invite.type == "administration" %}
+                            <td><span class="uk-badge uk-label uk-label-success">ADMINISTRATION</span></td>
+                            {% elif invite.type == "institution" %}
+                            <td><span class="uk-badge uk-label uk-label-default">INSTITUTION</span></td>
+                            {% else %}
+                            <td><span class="uk-badge uk-label uk-label-danger">BUG</span></td>
+                            {% endif %}
+
+                            <td>{{ invite.invited_date }}</td>
+
+                            <td><button class="uk-button uk-button-default uk-label-success" type="button">Accept</button></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
