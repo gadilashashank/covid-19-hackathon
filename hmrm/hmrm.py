@@ -120,7 +120,7 @@ def user_register():
                                        current_user=current_user)
 
             password = request.form['password']
-            hashed = bcrypt.generate_password_hash(password)
+            hashed = bcrypt.generate_password_hash(password).decode('utf-8')
 
             # TODO Verify whether the email is valid.
 
@@ -128,6 +128,9 @@ def user_register():
             user_add = Users(
                 request.form['fname'], request.form['lname'],
                 request.form['email'], hashed)
+
+            db.session.add(user_add)
+            db.session.commit()
 
             # Do stuff
 
