@@ -21,13 +21,22 @@
         <div class="uk-section-small">
             <div class="uk-container uk-container-large">
                 <h3>Jurisdiction Aggregate</h3>
-                <div uk-grid class="uk-child-width-1-1@s uk-child-width-1-2@m uk-child-width-1-4@xl">
+                <div uk-grid class="uk-child-width-1-1@s uk-child-width-1-2@m uk-child-width-1-5@xl">
                     <div>
                       <div class="uk-card uk-card-default uk-card-body">
                           <span class="statistics-text">Total Cases</span><br />
                           <span class="statistics-number">{{ current_admin.cases.active + current_admin.cases.recovered + current_admin.cases.fatal }}</span>
                       </div>
-                    </div>  
+                    </div> 
+                    <div>
+                      <div class="uk-card uk-card-default uk-card-body">
+                          <span class="statistics-text">Suspected</span><br />
+                          <span class="statistics-number">
+                              {{ current_admin.cases.suspected }}
+                              <span class="uk-label uk-label-warning">+{{ current_admin.cases.suspected_increment }}</span>
+                          </span>
+                      </div>
+                    </div> 
                     <div>
                         <div class="uk-card uk-card-default uk-card-body">
                             <span class="statistics-text">Active Cases</span><br />
@@ -89,8 +98,11 @@
                     </div>
                 </div>
 
-                <h3>Jurisdiction Memebers</h3>
+                <h3>Jurisdiction Members</h3>
                 <div class="uk-padding uk-margin uk-background-default">
+                    <div>
+                      Number of members: {{ current_admin.objects|length }}
+                    </div>
                     <ul class="uk-tab" data-uk-tab="{connect:'#data-tables'}">
                         <li class="uk-active"><a href="">CASE DISTRIBUTION</a></li>
                         <li><a href="">CAPACITY STRESS</a></li>
