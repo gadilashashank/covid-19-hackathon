@@ -204,6 +204,8 @@ def user_login():
                 current_user['first_name'] = user_check.fname
                 current_user['last_name'] = user_check.lname
                 current_user['email'] = user_check.email
+                current_user['is_authenticated'] = True
+
 
             else:
                 # Wrong password UI
