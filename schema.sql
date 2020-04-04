@@ -4,7 +4,7 @@ create table users
     fname varchar(50) not null,
     lname varchar(50) not null,
     email varchar(330) unique not null,
-    password varchar(40) not null
+    password varchar(100) not null
 );
 
 
