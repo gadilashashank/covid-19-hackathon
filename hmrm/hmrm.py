@@ -1,6 +1,6 @@
 import os
 import functools
-from flask import Blueprint, render_template, request, Flask, session, abort, redirect, url_for
+from flask import Blueprint, render_template, request, Flask, session, abort, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
@@ -284,6 +284,22 @@ def user_dashboards():
 @app.route("/institution/create")
 @login_required
 def institution_create():
+    if request.method == "POST":
+            data = request.data()
+            institution = Hospital(
+            name = data['name']
+            max_bed = data['max_bed']
+            current_beds = data['current_bed']
+            state = data['state']
+            district = data['district']
+            num_ventilators = data['num_ventilators']
+            mask_needed = data['num_needed']
+            num_testing_kits = data['num_testing_kits']
+            testing_capacity = data['testing_capacity']
+            )
+            db.session.add(institution)
+            db.commit()
+            return jsonify({"status": "success"})
     return render_template("institution/create.html", current_user=current_user)
 
 @app.route("/institution/<int:id>/overview")
