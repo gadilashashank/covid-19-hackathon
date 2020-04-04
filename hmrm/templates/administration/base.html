@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="/css/administration/view.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+{% endblock %}
+{% block content %}
+<div id="content">
+    <div id="sidebar" class="tm-sidebar-left uk-background-default">
+        <center>
+            <div class="user">
+                <img id="avatar" width="100" class="uk-border-circle" src="https://image.flaticon.com/icons/svg/167/167750.svg" />
+                <div class="uk-margin-top"></div>
+                <h3 class="uk-text-truncate">{{ current_user.first_name }} {{ current_user.last_name }}</h3>
+                <div id="email" class="uk-text-truncate">{{ current_user.email }}</div>
+                <span id="status" class="uk-margin-top uk-label uk-label-success">ADMIN</span>
+            </div>
+            <br/>
+        </center>
+        <ul class="uk-nav uk-nav-default">    
+            <li class="uk-nav-header">General</li>
+            <li><a href="">Discussion Forum</a></li>
+            <li><a href="">Administration</a></li>
+            <li><a href="">Members</a></li>
+    
+            <li class="uk-nav-header">Statistics</li>
+            <li><a href="">Patient Statistics</a></li>
+            <li><a href="">Supply-demand Statistics</a></li>
+            <li><a href="">Qurantine Information</a></li>
+        </ul>
+    </div>
+    {% block right_content %}{% endblock %}
+</div>
+{% endblock %}
