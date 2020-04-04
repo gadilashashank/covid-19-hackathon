@@ -34,7 +34,7 @@ class Users(db.Model):
         }
 
 class Hospital(db.Model):
-    hospital_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     max_bed = db.Column(db.Integer)
     current_beds = db.Column(db.Integer)
@@ -46,11 +46,11 @@ class Hospital(db.Model):
     testing_capacity = db.Column(db.Integer)
 
 class Patient(db.Model):
-    patient_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     sex = db.Column(db.String(1))
     hospital_id = db.Column(db.Integer, db.ForeignKey(Hospital.id, ondelete="CASCADE"), nullable=False)
-    hospital_ref = db.Relationship("hospital", backref=db.Backref("hospital_from_patient", cascade="all"))
+    hospital_ref = db.relationship("hospital", backref=db.backref("hospital_from_patient", cascade="all"))
 
     condition = db.Column(db.String(80))
     age = db.Column(db.Integer)
