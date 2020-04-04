@@ -70,7 +70,7 @@ def user_login():
     Login API
 
     Methods = POST, GET
-    
+
 
         POST
             Fields:
@@ -84,14 +84,39 @@ def user_login():
     print(request.method)
 
     if request.method == 'GET':
-        pass
+        if current_user['is_authenticated']:
+            print("User already logged in")
+            # return a view for already logged in
 
     elif request.method == 'POST':
         try:
-            # print(request.form['username'])
-            # print(request.form['password'])
 
-            # Do stuff
+            if current_user['is_authenticated']:
+                print("User already logged in")
+                # return a view for already logged in
+
+            print(request.form.keys)
+            password = request.form['password']
+            user_check = Users(email=request.form['username'], password=None,
+                               fname=None, lname=None)
+            stored = db.session.query(Users.password).filter_by(
+                email=request.form['username']).scalar()
+
+            if bcrypt.check_password_hash(stored, password):
+                print("User authenticated")
+                user_check = db.session.query(Users).filter_by(
+                    email=request.form['username']).scalar()
+                print(user_check.fname + " has logged in.")
+                current_user['name'] = user_check.fname + \
+                    " " + user_check.lname
+                current_user['first_name'] = user_check.fname
+                current_user['last_name'] = user_check.lname
+                current_user['email'] = user_check.email
+
+            else:
+                # Wrong password UI
+                print("Wrong login credentials")
+
             pass
 
         except KeyError as e:
@@ -121,7 +146,9 @@ def user_register():
                                        current_user=current_user)
 
             password = request.form['password']
+            print(password)
             hashed = bcrypt.generate_password_hash(password).decode('utf-8')
+            print(hashed)
 
             # TODO Verify whether the email is valid.
 
