@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, request, Flask, session, abort, re
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
-from hmrm.models import db, Users, Hospital, Patient, History_patient, Administration
+from hmrm.models import db, Users, Hospital, Patient, History_patient, Administration, Member, Invitation
 # from models import db, Users, Hospital
 
 # app = Blueprint("hmrm", __name__, static_folder="static/")
@@ -174,19 +174,41 @@ def user_register():
 
     return render_template("user/register.html")
 
-@app.route("/user/notifications")
+@app.route("/user/notifications", methods=['GET', 'POST'])
 @login_required
 def user_notifications():
-    invitations = [{
-        "dashboard_name" : "Hogwarts City",
-        "type" : "administration",
-        "invited_date" : "04 April 2020 17:24 IST",
-    },
-    {
-        "dashboard_name" : "Hogwarts Central Hospital",
-        "type" : "institution",
-        "invited_date" : "04 April 2020 17:37 IST",
-    }]
+    if request.method == "POST":
+        id = request.args["inviteid"]
+        Invitation.query.filter_by(inviteid=id).delete()
+
+        type = request.args["type"]
+        dbid = request.args["dbid"]
+        member_add = Member(session['email'], type, dbid)
+        db.session.add(member_add)
+
+        db.session.commit()
+
+    invitations = []
+
+    invs = db.session.query(Invitation).filter(Invitation.to_user == session['email']).all()
+    for invitation in invs:
+        dashboard_name = ""
+        type = invitation.type
+        if type == "administration":
+            admin = db.session.query(Administration).filter(Administration.doff_id == invitation.dashboard_id).scalar()
+            dashboard_name = admin.name
+        else:
+            hospital = db.session.query(Hospital).filter(Hospital.hospital_id == invitation.dashboard_id).scalar()
+            dashboard_name = hospital.name
+
+        invitations.append({
+            "inviteid" : invitation.inviteid,
+            "dashboard_id" : invitation.dashboard_id,
+            "dashboard_name" : dashboard_name,
+            "type" : invitation.type,
+            "invited_date" : str(invitation.invited_date)
+        })
+
     return render_template("user/notifications.html", invitations = invitations)
 
 @app.route("/user/logout")

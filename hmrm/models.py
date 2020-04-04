@@ -117,3 +117,37 @@ class Administration(db.Model):
         self.sname = sname
         self.region = region
         self.admin = admin
+
+class Member(db.Model):
+    __tablename__ = 'member'
+
+    memberid = db.Column(db.Integer, primary_key = True, nullable = False, 
+            autoincrement = True)
+    userid = db.Column(db.String(330), db.ForeignKey(
+        Users.email, ondelete="CASCADE"), nullable=False)
+    type = db.Column(db.String(30))
+    dashboard_id = db.Column(db.Integer)
+
+    def __init__(self, userid, type, dashboard_id):
+        self.userid = userid
+        self.type = type
+        self.dashboard_id = dashboard_id
+
+class Invitation(db.Model):
+    __tablename__ = 'invitation'
+    inviteid = db.Column(db.Integer, primary_key = True, nullable = False, 
+            autoincrement = True)
+    to_user = db.Column(db.String(330), db.ForeignKey(
+        Users.email, ondelete="CASCADE"), nullable=False)
+    from_user = db.Column(db.String(330), db.ForeignKey(
+        Users.email, ondelete="CASCADE"), nullable=False)
+    invited_date = db.Column(db.DateTime)
+    type = db.Column(db.String(30))
+    dashboard_id = db.Column(db.Integer)
+
+    def __init__(self, to_user, from_user, type, dashboard_id):
+        self.to_user = to_user
+        self.from_user = from_user
+        self.invited_date = DATE.today()
+        self.type = type
+        self.dashboard_id = dashboard_id       

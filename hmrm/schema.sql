@@ -80,3 +80,22 @@ create table history_patient
     foreign key (patient_id) references patients(patient_id)
 );
 
+create table member
+(
+    memberid serial primary key not null,
+    userid varchar(330),
+    type varchar(30),
+    dashboard_id int not null
+);
+
+create table invitation
+(
+    inviteid serial primary key not null,
+    to_user varchar(330),
+    from_user varchar(330),
+    invited_date date,
+    type varchar(30),
+    dashboard_id int not null
+);
+
+

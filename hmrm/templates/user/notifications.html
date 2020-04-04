@@ -35,11 +35,14 @@
 
                             <td>{{ invite.invited_date }}</td>
 
-                            <td><button class="uk-button uk-button-default uk-label-success" type="button">Accept</button></td>
+                            <td><form action="/user/notifications?inviteid={{invite.inviteid}}&type={{invite.type}}&dbid={{invite.dashboard_id}}" method="post"><button type="submit" method="post" class="uk-button uk-button-default uk-label-success" type="button">Accept</button></form></td>
                         </tr>
                         {% endfor %}
-                    </tbody>
+                    </tbody>                    
                 </table>
+                {% if invitations|length == 0 %}
+                <p class="uk-margin-left">No invitations.</p>
+                {% endif %}
             </div>
         </div>
     </div>
