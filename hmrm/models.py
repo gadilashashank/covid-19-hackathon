@@ -80,7 +80,8 @@ class Patient(db.Model):
     hospital_ref = db.relationship(
         "Hospital", backref=db.backref("Hospital", cascade="all"))
 
-    condition = db.Column(db.Enum("state_patient"))
+    condition = db.Column(db.Enum('DEAD', 'MILD', 'CRITICAL', 'ASYMPTOMATIC',
+'DISCHARGE_SOON', 'SUSPECTED', 'RECOVERED'))
     age = db.Column(db.Integer)
     disease = db.Column(db.String(512))
     history = db.Column(db.String(1024))
