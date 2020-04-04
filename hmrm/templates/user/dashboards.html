@@ -8,6 +8,25 @@
 <div id="wrapper">
     <div id="content" class="uk-container">
         <h1>Dashboards</h1>
+        <h2>Make a dashboard</h2>
+        <div class="uk-child-width-1-2@m uk-grid-small uk-grid-match" uk-grid>
+            <div>
+                <div class="uk-card uk-card-default uk-card-body">
+                    <h3 class="uk-card-title">Create Administration Dashboard</h3>
+                    <p>Allows you to monitor aggregate status and invidual status form the instititions participating.</p>
+                    <a class="uk-button uk-button-primary" href="/administration/create">Create</a>
+                </div>
+            </div>
+            <div>
+                <div class="uk-card uk-card-default uk-card-body">
+                    <h3 class="uk-card-title">Create Institution Dashboard</h3>
+                    <p>Maintain counts of patients and share information with administration officials.</p>
+                    <a class="uk-button uk-button-primary" href="/institution/create">Create</a>
+                </div>
+            </div>
+        </div>
+
+        <h2>Your dashboards</h2>
         <div uk-filter="target: .js-filter">
             <ul class="uk-subnav uk-subnav-pill">
                 <li class="uk-active" uk-filter-control><a href="#">All</a></li>
