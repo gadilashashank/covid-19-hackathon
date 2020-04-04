@@ -1,6 +1,7 @@
 import os
 from flask import Blueprint, render_template, request, Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
 
 
 # app = Blueprint("hmrm", __name__, static_folder="static/")
@@ -11,6 +12,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 
 db = SQLAlchemy(app)
 
+bcrypt = Bcrypt(app)
 
 current_user = {
     "is_authenticated": True,
@@ -116,9 +118,19 @@ def user_register():
                 # TODO Return an error to the view or API error.
                 return render_template("user/register.html",
                                        current_user=current_user)
+
+            password = request.form['password']
+            hashed = bcrypt.generate_password_hash(password).decode('utf-8')
+
             # TODO Verify whether the email is valid.
 
             # Add user.
+            user_add = Users(
+                request.form['fname'], request.form['lname'],
+                request.form['email'], hashed)
+
+            db.session.add(user_add)
+            db.session.commit()
 
             # Do stuff
 
