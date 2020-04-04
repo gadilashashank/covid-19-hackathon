@@ -1,14 +1,28 @@
-from flask import Blueprint, session, render_template, request
-app = Blueprint("hmrm", __name__, static_folder="static/")
+import os
+from flask import Blueprint, render_template, request, Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+
+from hmrm.models import db, Users
+
+# app = Blueprint("hmrm", __name__, static_folder="static/")
+app = Flask(__name__)
+
+db.init_app(app)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+
+
+bcrypt = Bcrypt(app)
 
 current_user = {
-    "is_authenticated" : True,
-    "name" : "Harry Potter",
-    "first_name" : "Harry",
-    "last_name" : "Potter",
-    "email" : "trump2020never@losers.com",
+    "is_authenticated": True,
+    "name": "Yashas Samaga",
+    "first_name": "Yashas",
+    "last_name": "Samaga",
+    "email": "trump2020@losers.com",
 
-    "dashboards" : [
+    "dashboards": [
         {
             "id" : 0,
             "name" : "Hogwarts City",
@@ -41,10 +55,10 @@ current_entity = {
         "deaths_increment" : 2 
     },
 
-    "history" : {
-        "active" : [62, 109, 450, 683, 892, 1043, 1244, 1432],
-        "recovered" : [4, 8, 12, 24, 44, 67, 70, 74],
-        "deaths" : [0, 0, 0, 1, 6, 12, 14, 16],
+    "history": {
+        "active": [62, 109, 450, 683, 892, 1043, 1244, 1432],
+        "recovered": [4, 8, 12, 24, 44, 67, 70, 74],
+        "deaths": [0, 0, 0, 1, 6, 12, 14, 16],
     }
 }
 
@@ -139,32 +153,106 @@ current_admin = {
 
 @app.route("/")
 def index():
-    return render_template("index.html", current_user = current_user)
+    return render_template("index.html", current_user=current_user)
 
-@app.route("/user/login")
+
+@app.route("/user/login", methods=['GET', 'POST'])
 def user_login():
-    return render_template("user/login.html", current_user = current_user)
+    """
+    Login API
 
-@app.route("/user/register")
+    Methods = POST, GET
+    
+
+        POST
+            Fields:
+                username - Username in the form of email for now.
+                password
+
+    """
+
+    # Currently, this API is coupled with the rendering part.
+
+    print(request.method)
+
+    if request.method == 'GET':
+        pass
+
+    elif request.method == 'POST':
+        try:
+            # print(request.form['username'])
+            # print(request.form['password'])
+
+            # Do stuff
+            pass
+
+        except KeyError as e:
+            print(e)
+            print("Keyerror")
+            # TODO Return an error instead.
+
+    # TODO Use Oauth token based login instead of rendering later.
+    return render_template("user/login.html", current_user=current_user)
+
+
+@app.route("/user/register", methods=['GET', 'POST'])
 def user_register():
-    return render_template("user/register.html", current_user = current_user)
+
+    print(request.method)
+    if request.method == 'GET':
+        pass
+
+    elif request.method == 'POST':
+        try:
+            print(request.form.keys)
+
+            if request.form['password'] != request.form['password']:
+                print("Passwords do not match")
+                # TODO Return an error to the view or API error.
+                return render_template("user/register.html",
+                                       current_user=current_user)
+
+            password = request.form['password']
+            hashed = bcrypt.generate_password_hash(password).decode('utf-8')
+
+            # TODO Verify whether the email is valid.
+
+            # Add user.
+            user_add = Users(
+                request.form['fname'], request.form['lname'],
+                request.form['username'], hashed)
+
+            db.session.add(user_add)
+            db.session.commit()
+
+            # Do stuff
+
+        except KeyError as e:
+            print(e)
+            print("Keyerror")
+
+    return render_template("user/register.html", current_user=current_user)
+
 
 @app.route("/user/logout")
 def user_logout():
     current_user["is_authenticated"] = False
     return index()
 
+
 @app.route("/user/dashboards")
 def user_dashboards():
-    return render_template("user/dashboards.html", current_user = current_user)
+    return render_template("user/dashboards.html", current_user=current_user)
+
 
 @app.route("/institution/create")
 def institution_create():
-    return render_template("institution/create.html", current_user = current_user)
+    return render_template("institution/create.html", current_user=current_user)
+
 
 @app.route("/administration/create")
 def administration_create():
-    return render_template("administration/create.html", current_user = current_user)
+    return render_template("administration/create.html", current_user=current_user)
 
 @app.route("/administration/overview/<int:id>")
 def administration_overview(id):
