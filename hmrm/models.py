@@ -53,7 +53,6 @@ class Patient(db.Model):
     sex = db.Column(db.String(1))
     hospital_id = db.Column(db.Integer, db.ForeignKey(
         Hospital.id, ondelete="CASCADE"), nullable=False)
-    # hospital_ref = db.relationship("hospital", backref=db.backref("hospital_from_patient", cascade="all"))
     hospital_ref = db.relationship(
         "Hospital", backref=db.backref("Hospital", cascade="all"))
 

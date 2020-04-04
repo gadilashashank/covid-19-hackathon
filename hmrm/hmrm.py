@@ -72,7 +72,7 @@ current_entity2 = {
         "recovered" : 74,
         "recovered_increment" : 4,
         "fatal" : 16,
-        "fatal_increment" : 2 
+        "fatal_increment" : 2
     },
 
     "history" : {
@@ -96,7 +96,7 @@ current_entity3 = {
         "recovered" : 4,
         "recovered_increment" : 2,
         "fatal" : 1,
-        "fatal_increment" : 1 
+        "fatal_increment" : 1
     },
 
     "history" : {
@@ -120,7 +120,7 @@ current_entity4 = {
         "recovered" : 14,
         "recovered_increment" : 2,
         "fatal" : 7,
-        "fatal_increment" : 1 
+        "fatal_increment" : 1
     },
 
     "history" : {
@@ -143,7 +143,7 @@ current_admin = {
         "recovered" : 74,
         "recovered_increment" : 4,
         "fatal" : 16,
-        "fatal_increment" : 2 
+        "fatal_increment" : 2
     },
 
     "history" : {
@@ -166,7 +166,7 @@ current_institution = {
         "recovered" : 74,
         "recovered_increment" : 4,
         "fatal" : 16,
-        "fatal_increment" : 2 
+        "fatal_increment" : 2
     },
 
     "history" : {
@@ -183,7 +183,7 @@ def login_required(f):
     def decorated_function(*args, **kws):
         if session.get('is_authenticated') is not True:
             return redirect(url_for('user_login') + '?source_url=' + request.path)
-        return f(*args, **kws)   
+        return f(*args, **kws)
     return decorated_function
 
 @app.route("/")
@@ -197,7 +197,7 @@ def user_login():
     if request.method == 'GET':
         if session.get('is_authenticated') is True:
             return redirect(success_url)
-            
+
     if request.method == 'POST':
         try:
             if session.get('is_authenticated') is True:
@@ -209,7 +209,7 @@ def user_login():
 
             if stored is not None and bcrypt.check_password_hash(stored, password):
                 user_check = db.session.query(Users).filter_by(email=request.form['email']).scalar()
-                session['name'] = user_check.fname + ' ' + user_check.lname                
+                session['name'] = user_check.fname + ' ' + user_check.lname
                 session['first_name'] = user_check.fname
                 session['last_name'] = user_check.lname
                 session['email'] = user_check.email
@@ -243,11 +243,11 @@ def user_register():
             db.session.add(user_add)
             db.session.commit()
 
-            session['name'] = user_add.fname + ' ' + user_add.lname                
+            session['name'] = user_add.fname + ' ' + user_add.lname
             session['first_name'] = user_add.fname
             session['last_name'] = user_add.lname
             session['email'] = user_add.email
-            session['is_authenticated'] = True         
+            session['is_authenticated'] = True
             return index()
 
         except KeyError as e:
@@ -297,12 +297,12 @@ def institution_members(id):
     invitations = [{
       "name" : "Hermi",
       "userid" : 12,
-      "created" : "04 April 2020 17:24 IST",  
+      "created" : "04 April 2020 17:24 IST",
     },
     {
       "name" : "Albus Dumbledore",
       "userid" : 15,
-      "created" : "04 April 2020 18:34 IST",  
+      "created" : "04 April 2020 18:34 IST",
     }]
     return render_template("institution/members.html", current_user = current_user, current_institution = current_institution, invitations = invitations)
 
@@ -355,6 +355,34 @@ def administration_overview(id):
 @app.route("/administration/view/<int:id>")
 @login_required
 def administration_view(id):
-    if id < len(current_objects):
-        return render_template("administration/view.html", view_id = int(id), current_user = current_user, current_entity = current_objects[id])
-    return user_dashboards()
+    hospital = db.session.query(Hospital).where(Hospital.hospital_id == id).first()
+    dead_patients = db.session.query(Patient).where(Patient.hospital_id == id).where(Patient.condition == "DEAD").sum()
+    critical_patients = db.session.query(Patient).where(Patient.hospital_id == id).where(Patient.condition == "CRITICAL").sum()
+    discharge_soon_patients = db.session.query(Patient).where(Patient.hospital_id == id).where(Patient.condition == "DISCHARGE_SOON").sum()
+    recovered_patients = db.session.query(Patient).where(Patient.hospital_id == id).where(Patient.condition == "RECOVERED   ").sum()
+    history = db.session.query(History).where(History.hospital_id == id).order_by(date).all()
+
+    active = []
+    recovered = []
+    fatal = []
+    for i in history:
+        active.append(i.active)
+        recovered.append(i.active)
+        fatal.append(i.active)
+
+    entity = {
+        "name": hospital.name,
+        "id": hospital.hospital_id,
+        "cases": {
+            "active": str(dead_patients + critical_patients + discharge_soon_patients),
+            "recovered": recovered_patients,
+            "fatal": dead_patients,
+        },
+
+        "history": {
+            "active": active,
+            "recovered": recovered,
+            "fatal": fatal
+        }
+    }
+    return entity
