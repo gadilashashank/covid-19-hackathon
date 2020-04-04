@@ -211,16 +211,15 @@ def user_register():
             db.session.add(user_add)
             db.session.commit()
 
-            session['name'] = user_check.fname + ' ' + user_check.lname                
-            session['first_name'] = user_check.fname
-            session['last_name'] = user_check.lname
-            session['email'] = user_check.email
+            session['name'] = user_add.fname + ' ' + user_add.lname                
+            session['first_name'] = user_add.fname
+            session['last_name'] = user_add.lname
+            session['email'] = user_add.email
             session['is_authenticated'] = True         
             return index()
 
         except KeyError as e:
-            print(e)
-            print("Keyerror")
+            print("Keyerror: ", e)
             return render_template("user/register.html", notification="Something went wrong! Sorry", current_user=current_user)
 
     return render_template("user/register.html", current_user=current_user)
@@ -233,6 +232,21 @@ def user_logout():
 @app.route("/user/dashboards")
 @login_required
 def user_dashboards():
+    # BACKEND TODO: fetch all dashboards of a user
+    # need to make a list like the one below
+    # [
+    #     {
+    #         "id" : 0,
+    #         "name" : "Hogwarts City",
+    #         "type" : "administration"
+    #     },
+    #     {
+    #         "id" : 1,
+    #         "name" : "Hogwarts Hospital",
+    #         "type" : "institution"
+    #     }
+    # ]
+    # current_user is the wrong way to do it but use it for now; Yashas will fix thing once the backend can populate info in the current way
     return render_template("user/dashboards.html", current_user=current_user)
 
 @app.route("/institution/create")
