@@ -1,27 +1,21 @@
 import os
-from flask import Blueprint, render_template, request, Flask
+import functools
+from flask import Blueprint, render_template, request, Flask, session, abort, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
 from hmrm.models import db, Users
 
 # app = Blueprint("hmrm", __name__, static_folder="static/")
+
 app = Flask(__name__)
-
-db.init_app(app)
-
+app.config['SECRET_KEY'] = '9OLWxND4o83j4K4iuopO'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
-
+db.init_app(app)
 
 bcrypt = Bcrypt(app)
 
 current_user = {
-    "is_authenticated": True,
-    "name": "Yashas Samaga",
-    "first_name": "Yashas",
-    "last_name": "Samaga",
-    "email": "trump2020@losers.com",
-
     "dashboards": [
         {
             "id" : 0,
@@ -151,143 +145,115 @@ current_admin = {
     "objects" : current_objects
 }
 
+# decorator for requiring login to access a page
+def login_required(f):
+    @functools.wraps(f)
+    def decorated_function(*args, **kws):
+        if session.get('is_authenticated') is not True:
+            return redirect(url_for('user_login') + '?source_url=' + request.path)
+        return f(*args, **kws)   
+    return decorated_function
+
 @app.route("/")
 def index():
     return render_template("index.html", current_user=current_user)
 
-
 @app.route("/user/login", methods=['GET', 'POST'])
 def user_login():
-    """
-    Login API
-
-    Methods = POST, GET
-
-
-        POST
-            Fields:
-                username - Username in the form of email for now.
-                password
-
-    """
-
-    # Currently, this API is coupled with the rendering part.
-
-    print(request.method)
+    success_url = request.args.get('source_url', url_for('user_dashboards'))
 
     if request.method == 'GET':
-        if current_user['is_authenticated']:
-            print("User already logged in")
-            # return a view for already logged in
+        if session.get('is_authenticated') is True:
+            return redirect(success_url)
 
-    elif request.method == 'POST':
+    if request.method == 'POST':
         try:
+            if session.get('is_authenticated') is True:
+                return redirect(success_url)
 
-            if current_user['is_authenticated']:
-                print("User already logged in")
-                # return a view for already logged in
-
-            print(request.form.keys)
             password = request.form['password']
-            user_check = Users(email=request.form['username'], password=None,
-                               fname=None, lname=None)
-            stored = db.session.query(Users.password).filter_by(
-                email=request.form['username']).scalar()
+            user_check = Users(email=request.form['email'], password=None, fname=None, lname=None)
+            stored = db.session.query(Users.password).filter_by(email=request.form['useremailname']).scalar()
 
             if bcrypt.check_password_hash(stored, password):
-                print("User authenticated")
-                user_check = db.session.query(Users).filter_by(
-                    email=request.form['username']).scalar()
-                print(user_check.fname + " has logged in.")
-                current_user['name'] = user_check.fname + \
-                    " " + user_check.lname
-                current_user['first_name'] = user_check.fname
-                current_user['last_name'] = user_check.lname
-                current_user['email'] = user_check.email
-                current_user['is_authenticated'] = True
-
-
+                user_check = db.session.query(Users).filter_by(email=request.form['email']).scalar()
+                session['name'] = user_check.fname + ' ' + user_check.lname                
+                session['first_name'] = user_check.fname
+                session['last_name'] = user_check.lname
+                session['email'] = user_check.email
+                session['is_authenticated'] = True
+                return redirect(success_url)
             else:
-                # Wrong password UI
-                print("Wrong login credentials")
-
-            pass
+                return render_template("user/login.html", notification="Invalid login credentials.", current_user=current_user)
 
         except KeyError as e:
-            print(e)
-            print("Keyerror")
-            # TODO Return an error instead.
+            print("KeyError: ", e)
+            return render_template("user/login.html", notification="Oops! Something went wrong.", current_user=current_user)
 
     # TODO Use Oauth token based login instead of rendering later.
     return render_template("user/login.html", current_user=current_user)
 
-
 @app.route("/user/register", methods=['GET', 'POST'])
 def user_register():
+    if session.get('is_authenticated') is not True:
+        
 
-    print(request.method)
     if request.method == 'GET':
         pass
-
     elif request.method == 'POST':
         try:
             print(request.form.keys)
-
-            if request.form['password'] != request.form['password']:
-                print("Passwords do not match")
-                # TODO Return an error to the view or API error.
-                return render_template("user/register.html",
-                                       current_user=current_user)
+            if request.form['password'] != request.form['confirm_password']:
+                return render_template("user/register.html", notification="password mismatch", current_user=current_user)
 
             password = request.form['password']
             print(password)
             hashed = bcrypt.generate_password_hash(password).decode('utf-8')
             print(hashed)
 
-            # TODO Verify whether the email is valid.
-
-            # Add user.
             user_add = Users(
                 request.form['fname'], request.form['lname'],
-                request.form['username'], hashed)
+                request.form['email'], hashed)
 
             db.session.add(user_add)
-            db.session.commit()
-
-            # Do stuff
+            db.session.commit()            
+            return index()
 
         except KeyError as e:
             print(e)
             print("Keyerror")
+            return render_template("user/register.html", notification="Something went wrong! Sorry", current_user=current_user)
 
     return render_template("user/register.html", current_user=current_user)
 
 
 @app.route("/user/logout")
 def user_logout():
-    current_user["is_authenticated"] = False
+    session["is_authenticated"] = False
     return index()
 
-
 @app.route("/user/dashboards")
+@login_required
 def user_dashboards():
     return render_template("user/dashboards.html", current_user=current_user)
 
-
 @app.route("/institution/create")
+@login_required
 def institution_create():
     return render_template("institution/create.html", current_user=current_user)
 
-
 @app.route("/administration/create")
+@login_required
 def administration_create():
     return render_template("administration/create.html", current_user=current_user)
 
 @app.route("/administration/overview/<int:id>")
+@login_required
 def administration_overview(id):
     return render_template("administration/overview.html", overview_id = int(id), current_user = current_user, current_admin = current_admin)
 
 @app.route("/administration/view/<int:id>")
+@login_required
 def administration_view(id):
     if id < len(current_objects):
         return render_template("administration/view.html", view_id = int(id), current_user = current_user, current_entity = current_objects[id])
