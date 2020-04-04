@@ -1,0 +1,233 @@
+{% extends '/administration/base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/css/administration/base.css"/>
+<link rel="stylesheet" href="/static/css/administration/members.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vuetable-2@1.7.5/dist/vuetable-2.css" />
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetable-2@1.7.5/dist/vuetable-2.js"></script>
+
+{% endblock %}
+
+{% block breadcrumb_list %}
+<li><span href=#>Members</span></li>
+{% endblock %}
+
+{% block right_content %}
+<div class="uk-section-small">
+    <div class="uk-container uk-container-large">
+        <div uk-grid class="uk-child-width-1-1@s uk-child-width-1-2@l">
+            <div>
+                <div class="uk-card uk-card-default">
+                    <div class="uk-card-body">
+                        {% if invite_error is defined %}
+                            <div class="uk-alert-danger" uk-alert>
+                                <a class="uk-alert-close" uk-close></a>
+                                <p>{{invite_error}}</p>
+                            </div>
+                        {% endif %}
+                        <h3>Invite</h3>
+                        <form method="post">
+                            <div class="uk-margin">
+                            <div class="uk-inline uk-width-1-1">
+                                <span class="uk-form-icon" uk-icon="icon: user"></span>
+                                <input class="uk-input uk-form-large" type="text" placeholder="email" name="email">
+                            </div>
+                            </div>
+                            <div class="uk-margin">
+                            <button type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">Invite</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="uk-card uk-card-default">
+                    <div class="uk-card-body">
+                        <h3>Pending invitations</h3>
+                        <table class="uk-table uk-table-middle uk-table-divider">
+                            <thead>
+                                <tr>
+                                    <th class="uk-width-small">User</th>
+                                    <th>Created on</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for invite in invitations %}
+                                <tr>
+                                    <td><a class="uk-link-muted uk-text-underline" href="/user/{{invite.userid}}"><u>{{ invite.name }}</u></a></td>
+                                    <td>{{ invite.created }}</td>
+                                    <td><button class="uk-button uk-button-default uk-label-danger" type="button">Cancel</button></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="members_table" class="uk-margin uk-card uk-card-default">
+            <div id="table-wrapper" class="uk-card-body">
+                <h3>List of members</h3>
+                <vuetable ref="vuetable"
+                    api-url="https://vuetable.ratiw.net/api/users"
+                    :fields="fields"
+                    :css="css.table"
+                    pagination-path=""
+                    :per-page="10"
+                    :sort-order="sortOrder"
+                    @vuetable:pagination-data="onPaginationData"
+                    @vuetable:loading="onLoading"        
+                    @vuetable:loaded="onLoaded"
+                >
+                    <template slot="actions" scope="props">
+                        <div class="table-button-container">
+                            <button class="uk-button uk-button-default uk-button-small" 
+                                @click="deleteRow(props.rowData)">
+                                <span uk-icon="icon: trash; ratio: 0.7"></span>
+                                Remove
+                            </button>
+                        </div>
+                    </template>
+                </vuetable>
+                <vuetable-pagination-uikit ref="pagination"
+                    :on-each-side="3"
+                    @vuetable-pagination:change-page="onChangePage"
+                >
+                </vuetable-pagination-uikit>
+            </div>
+        </div>
+    </div>
+</div>
+<script> 
+ Vue.use(Vuetable);
+
+Vue.component('vuetable-pagination-uikit', {
+  template: `
+    <ul class="uk-pagination uk-float-right">
+      <li :class="{'uk-disabled': isOnFirstPage}">
+        <a class="uk-button uk-button-small" @click.prevent="loadPage(1)">
+          first
+        </a>
+      </li>
+      <li :class="{'uk-disabled': isOnFirstPage}">
+        <a href="" @click.prevent="loadPage('prev')">
+          <span uk-pagination-previous class="uk-pagination-previous"></span>
+        </a>
+      </li>
+      <template v-if="notEnoughPages">
+        <li v-for="n in totalPage">
+          <a href="" @click.prevent="loadPage(n)" :class="{'uk-active': isCurrentPage(n)}" v-html="n"></a>
+        </li>
+      </template>
+      <template v-else>
+        <li v-for="n in windowSize" :class="{'uk-active': isCurrentPage(windowStart+n-1)}">
+          <a @click.prevent="loadPage(windowStart+n-1)" v-html="windowStart+n-1"></a>
+        </li>
+      </template>
+      <li :class="{'uk-disabled': isOnLastPage}">
+        <a href="" @click.prevent="loadPage('next')"><span uk-pagination-next></span></a>
+      </li>
+      <li :class="{'uk-disabled': isOnLastPage}">
+        <a class="uk-button uk-button-small" @click.prevent="loadPage(totalPage)">
+          last
+        </a>
+      </li>
+    </ul>
+  `,
+  mixins: [Vuetable.VuetablePaginationMixin],
+})
+
+new Vue({
+  el: '#members_table',
+  components: {
+   'vuetable-pagination': Vuetable.VuetablePagination
+  },
+  data: {
+    sortOrder: [
+      {
+          field: 'name',
+          sortField: 'name',
+          direction: 'asc'
+      }
+    ],
+    fields: [
+      '__handle',
+      { 
+        name: 'name', 
+        title: `<span class="icon is-small orange"><i class="fa fa-user"></i></span> Full Name`,
+        sortField: 'name'
+      }, 
+      {
+        name: 'email',
+        title: 'Email',
+        sortField: 'email'
+      },
+      'birthdate','nickname',
+      {
+        name: 'gender',
+        title: 'Gender',
+        sortField: 'gender'
+      },
+      '__slot:actions'
+    ],
+    css: {
+      table: {
+        tableClass: 'uk-table uk-table-striped uk-table-hover uk-table-small',
+        loadingClass: 'loading',
+        ascendingIcon: 'chevron-up',
+        descendingIcon: 'chevron-down',
+        handleIcon: 'menu',
+        renderIcon (classes, options) {
+          return `<span uk-icon="icon: ${classes[1]}" class="${classes[0]}"></span>`
+        }
+      },
+      pagination: {
+        wrapperClass: 'vuetable-pagination uk-pagination uk-float-right',
+        activeClass: 'uk-active',
+        disabledClass: 'uk-disabled',
+        pageClass: 'button small outline',
+        linkClass: 'button small outline',
+        icons: {
+          first: '',
+          prev: '',
+          next: '',
+          last: '',
+        },
+      }
+    }
+  },
+  computed:{
+  /*httpOptions(){
+    return {headers: {'Authorization': "my-token"}} //table props -> :http-options="httpOptions"
+  },*/
+ },
+ methods: {
+    onPaginationData (paginationData) {
+      this.$refs.pagination.setPaginationData(paginationData)
+    },
+    onChangePage (page) {
+      this.$refs.vuetable.changePage(page)
+    },
+    editRow(rowData){
+      alert("You clicked edit on"+ JSON.stringify(rowData))
+    },
+    deleteRow(rowData){
+      alert("You clicked delete on"+ JSON.stringify(rowData))
+    },
+    onLoading() {
+      console.log('loading... show your spinner here')
+    },
+    onLoaded() {
+      console.log('loaded! .. hide your spinner here')
+    }
+  }
+})
+</script>
+{% endblock %}

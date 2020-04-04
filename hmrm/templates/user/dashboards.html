@@ -34,7 +34,7 @@
                 <li uk-filter-control="[data-color='institution']"><a href="#">Institution</a></li>
             </ul>
             <ul class="js-filter uk-child-width-1-2 uk-child-width-1-2@m" uk-grid>
-                {% for board in current_user.dashboards %}
+                {% for board in dashboards %}
                 <li data-color="{{ board.type }}">
                     <div class="uk-card uk-card-default uk-card-body">
                         <a href="/{{ board.type }}/{{board.id}}/overview"><h3 class="uk-card-title">{{ board.name }}</h3></a>

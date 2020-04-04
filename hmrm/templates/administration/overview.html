@@ -5,194 +5,185 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
 {% endblock %}
+
+{% block breadcrumb_list %}
+<li><span href=#>Overview</span></li>
+{% endblock %}
+
 {% block right_content %}
-<div id="content">
-    <div class="content-padder content-background">
-        <div class="uk-section-small uk-section-default header">
-            <div class="uk-container uk-container-large">
-                <h1>{{ current_admin.name }}</h1>
-                <p>{{ current_admin.shortname }}</p>
-                <ul class="uk-breadcrumb">
-                    <li><a href="/administration/overview/{{overview_id}}">Overview</a></li>
-                    <li><span href=#>{{ current_admin.shortname }}</span></li>
-                </ul>
+<div class="uk-section-small">
+    <div class="uk-container uk-container-large">
+        <h3>Jurisdiction Aggregate</h3>
+        <div uk-grid class="uk-child-width-1-1@s uk-child-width-1-2@m uk-child-width-1-5@xl">
+            <div>
+              <div class="uk-card uk-card-default uk-card-body">
+                  <span class="statistics-text">Total</span><br />
+                  <span class="statistics-number">{{ current_admin.cases.active + current_admin.cases.recovered + current_admin.cases.fatal }}</span>
+              </div>
+            </div> 
+            <div>
+              <div class="uk-card uk-card-default uk-card-body">
+                  <span class="statistics-text">Suspected</span><br />
+                  <span class="statistics-number">
+                      {{ current_admin.cases.suspected }}
+                      <span class="uk-label uk-label-warning">+{{ current_admin.cases.suspected_increment }}</span>
+                  </span>
+              </div>
+            </div> 
+            <div>
+                <div class="uk-card uk-card-default uk-card-body">
+                    <span class="statistics-text">Active</span><br />
+                    <span class="statistics-number">
+                        {{ current_admin.cases.active }}
+                        <span class="uk-label uk-label-warning">+{{ current_admin.cases.active_increment }}</span>
+                    </span>
+                </div>
+            </div>
+            <div>
+              <div class="uk-card uk-card-default uk-card-body">
+                  <span class="statistics-text">Recovered</span><br />
+                  <span class="statistics-number">
+                    {{ current_admin.cases.recovered }}
+                    <span class="uk-label uk-label-success">+{{ current_admin.cases.recovered_increment }}</span>
+                  </span>
+              </div>
+            </div>
+            <div>
+                <div class="uk-card uk-card-default uk-card-body">
+                    <span class="statistics-text">Fatal</span><br/>
+                    <span class="statistics-number">
+                      {{ current_admin.cases.fatal }}
+                      <span class="uk-label uk-label-danger">+{{ current_admin.cases.fatal_increment }}</span>
+                    </span>
+                </div>
             </div>
         </div>
-        <div class="uk-section-small">
-            <div class="uk-container uk-container-large">
-                <h3>Jurisdiction Aggregate</h3>
-                <div uk-grid class="uk-child-width-1-1@s uk-child-width-1-2@m uk-child-width-1-5@xl">
-                    <div>
-                      <div class="uk-card uk-card-default uk-card-body">
-                          <span class="statistics-text">Total Cases</span><br />
-                          <span class="statistics-number">{{ current_admin.cases.active + current_admin.cases.recovered + current_admin.cases.fatal }}</span>
-                      </div>
-                    </div> 
-                    <div>
-                      <div class="uk-card uk-card-default uk-card-body">
-                          <span class="statistics-text">Suspected</span><br />
-                          <span class="statistics-number">
-                              {{ current_admin.cases.suspected }}
-                              <span class="uk-label uk-label-warning">+{{ current_admin.cases.suspected_increment }}</span>
-                          </span>
-                      </div>
-                    </div> 
-                    <div>
-                        <div class="uk-card uk-card-default uk-card-body">
-                            <span class="statistics-text">Active Cases</span><br />
-                            <span class="statistics-number">
-                                {{ current_admin.cases.active }}
-                                <span class="uk-label uk-label-warning">+{{ current_admin.cases.active_increment }}</span>
-                            </span>
-                        </div>
-                    </div>
-                    <div>
-                      <div class="uk-card uk-card-default uk-card-body">
-                          <span class="statistics-text">Recovered</span><br />
-                          <span class="statistics-number">
-                            {{ current_admin.cases.recovered }}
-                            <span class="uk-label uk-label-success">+{{ current_admin.cases.recovered_increment }}</span>
-                          </span>
-                      </div>
-                    </div>
-                    <div>
-                        <div class="uk-card uk-card-default uk-card-body">
-                            <span class="statistics-text">Fatal</span><br/>
-                            <span class="statistics-number">
-                              {{ current_admin.cases.fatal }}
-                              <span class="uk-label uk-label-danger">+{{ current_admin.cases.fatal_increment }}</span>
-                            </span>
-                        </div>
-                    </div>
+        <div uk-grid class="uk-child-width-1-1@s uk-child-width-1-2@l">
+            <div>
+            <div class="uk-card uk-card-default">
+                <div class="uk-card-header">
+                Active
                 </div>
-                <div uk-grid class="uk-child-width-1-1@s uk-child-width-1-2@l">
-                    <div>
-                    <div class="uk-card uk-card-default">
-                        <div class="uk-card-header">
-                        Active
-                        </div>
-                        <div class="uk-card-body">
-                        <canvas id="active_chart"></canvas>
-                        </div>
-                    </div>
-                    </div>
-                    <div>
-                    <div class="uk-card uk-card-default">
-                        <div class="uk-card-header">
-                        Recovered
-                        </div>
-                        <div class="uk-card-body">
-                        <canvas id="recovered_chart"></canvas>
-                        </div>
-                    </div>
-                    </div>
-                    <div>
-                    <div class="uk-card uk-card-default">
-                      <div class="uk-card-header">
-                        Fatal
-                      </div>
-                      <div class="uk-card-body">
-                        <canvas id="death_chart"></canvas>
-                      </div>
-                    </div>
-                    </div>
-                </div>
-
-                <h3>Jurisdiction Members</h3>
-                <div class="uk-padding uk-margin uk-background-default">
-                    <div>
-                      Number of members: {{ current_admin.objects|length }}
-                    </div>
-                    <ul class="uk-tab" data-uk-tab="{connect:'#data-tables'}">
-                        <li class="uk-active"><a href="">CASE DISTRIBUTION</a></li>
-                        <li><a href="">CAPACITY STRESS</a></li>
-                        <li><a href="">TESTING</a></li>
-                      </ul>
-                      <ul id="data-tables" class="uk-switcher uk-margin">
-                        <li>
-                            <table class="uk-table uk-table-hover uk-table-middle uk-table-divider sortable">
-                                <thead>
-                                    <tr>
-                                        <th>Institution</th>
-                                        <th>Active</th>
-                                        <th>Recovered</th>
-                                        <th>Fatal</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for obj in current_admin.objects %}
-                                    <tr>
-                                        <td><a href="/administration/view/{{obj.id}}">{{ obj.name }}</a></td>
-                                        <td>{{ obj.cases.active }} (+{{obj.cases.active_increment}})</td>
-                                        <td>{{ obj.cases.recovered }} (+{{obj.cases.recovered_increment}})</td>
-                                        <td>{{ obj.cases.fatal }} (+{{obj.cases.fatal_increment}})</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                                {% if current_admin.objects|length == 0 %}
-                                You are not following any institution/administrations. 
-                                {% endif %}
-                            </table>
-                        </li>
-                        <li>
-                            <table class="uk-table uk-table-middle uk-table-divider sortable">
-                                <thead>
-                                    <tr>
-                                        <th>Institution</th>
-                                        <th>Capacity</th>
-                                        <th>Active Cases</th>
-                                        <th>In Use</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for obj in current_admin.objects %}
-                                    {% if obj.capacity < obj.cases.active %}
-                                    <tr class="uk-label-danger">
-                                    {% elif obj.capacity > obj.cases.active and obj.cases.active > 0.8 * obj.capacity %}
-                                    <tr class="uk-label-warning">
-                                    {% else %}
-                                    <tr>
-                                    {% endif %}
-                                        <td><a href="/administration/view/{{obj.id}}">{{ obj.name }}</a></td>
-                                        <td>{{ obj.capacity }}</td>
-                                        <td>{{ obj.cases.active }}</td>
-                                        <td>{{ (obj.cases.active / obj.capacity * 100)|round|int }}%</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                                {% if current_admin.objects|length == 0 %}
-                                You are not following any institution/administrations. 
-                                {% endif %}
-                            </table>
-                        </li>
-                        <li>
-                          <table class="uk-table uk-table-middle uk-table-divider sortable">
-                            <thead>
-                                <tr>
-                                    <th>Institution</th>
-                                    <th>Testig Capacity (per day)</th>
-                                    <th>Active Cases</th>
-                                    <th>In Use</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for obj in current_admin.objects %}
-                                <tr>
-                                    <td><a href="/administration/view/{{obj.id}}">{{ obj.name }}</a></td>
-                                    <td>{{ obj.capacity }}</td>
-                                    <td>{{ obj.cases.active }}</td>
-                                    <td>{{ (obj.cases.active / obj.capacity * 100)|round|int }}%</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                            {% if current_admin.objects|length == 0 %}
-                            You are not following any institution/administrations. 
-                            {% endif %}
-                          </table>
-                        </li>
-                      </ul>
+                <div class="uk-card-body">
+                <canvas id="active_chart"></canvas>
                 </div>
             </div>
+            </div>
+            <div>
+            <div class="uk-card uk-card-default">
+                <div class="uk-card-header">
+                Recovered
+                </div>
+                <div class="uk-card-body">
+                <canvas id="recovered_chart"></canvas>
+                </div>
+            </div>
+            </div>
+            <div>
+            <div class="uk-card uk-card-default">
+              <div class="uk-card-header">
+                Fatal
+              </div>
+              <div class="uk-card-body">
+                <canvas id="death_chart"></canvas>
+              </div>
+            </div>
+            </div>
+        </div>
+
+        <h3>Jurisdiction Members</h3>
+        <div class="uk-padding uk-margin uk-background-default">
+            <div>
+              Number of members: {{ current_admin.objects|length }}
+            </div>
+            <ul class="uk-tab" data-uk-tab="{connect:'#data-tables'}">
+                <li class="uk-active"><a href="">CASE DISTRIBUTION</a></li>
+                <li><a href="">CAPACITY STRESS</a></li>
+                <li><a href="">TESTING</a></li>
+              </ul>
+              <ul id="data-tables" class="uk-switcher uk-margin">
+                <li>
+                    <table class="uk-table uk-table-hover uk-table-middle uk-table-divider sortable">
+                        <thead>
+                            <tr>
+                                <th>Institution</th>
+                                <th>Active</th>
+                                <th>Recovered</th>
+                                <th>Fatal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for obj in current_admin.objects %}
+                            <tr>
+                                <td><a class="uk-text-secondary" href="/administration/{{current_admin.id}}/view/{{obj.id}}">{{ obj.name }}</a></td>
+                                <td>{{ obj.cases.active }} (+{{obj.cases.active_increment}})</td>
+                                <td>{{ obj.cases.recovered }} (+{{obj.cases.recovered_increment}})</td>
+                                <td>{{ obj.cases.fatal }} (+{{obj.cases.fatal_increment}})</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        {% if current_admin.objects|length == 0 %}
+                        You are not following any institution/administrations. 
+                        {% endif %}
+                    </table>
+                </li>
+                <li>
+                    <table class="uk-table uk-table-middle uk-table-divider sortable">
+                        <thead>
+                            <tr>
+                                <th>Institution</th>
+                                <th>Capacity</th>
+                                <th>Active Cases</th>
+                                <th>In Use</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for obj in current_admin.objects %}
+                            {% if obj.patient_capacity < obj.cases.active %}
+                            <tr class="uk-label-danger">
+                            {% elif obj.patient_capacity > obj.cases.active and obj.cases.active > 0.8 * obj.patient_capacity %}
+                            <tr class="uk-label-warning">
+                            {% else %}
+                            <tr>
+                            {% endif %}
+                                <td><a class="uk-text-secondary" href="/administration/{{current_admin.id}}/view/{{obj.id}}">{{ obj.name }}</a></td>
+                                <td>{{ obj.patient_capacity }}</td>
+                                <td>{{ obj.cases.active }}</td>
+                                <td>{{ (obj.cases.active / obj.patient_capacity * 100)|round|int }}%</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        {% if current_admin.objects|length == 0 %}
+                        You are not following any institution/administrations. 
+                        {% endif %}
+                    </table>
+                </li>
+                <li>
+                  <table class="uk-table uk-table-hover uk-table-middle uk-table-divider sortable">
+                    <thead>
+                        <tr>
+                            <th>Institution</th>
+                            <th>Testig Capacity (per day)</th>
+                            <th>Suspected Cases</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for obj in current_admin.objects %}
+                        {% if obj.testing_capacity > 0 %}
+                        <tr>
+                            <td><a class="uk-text-secondary" href="/administration/{{current_admin.id}}/view/{{obj.id}}">{{ obj.name }}</a></td>
+                            <td>{{ obj.testing_capacity }}</td>
+                            <td>{{ obj.cases.suspected }}</td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                    {% if current_admin.objects|length == 0 %}
+                    You are not following any institution/administrations. 
+                    {% endif %}
+                  </table>
+                </li>
+              </ul>
         </div>
     </div>
 </div>
