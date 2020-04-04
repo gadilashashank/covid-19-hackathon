@@ -49,6 +49,9 @@
                 {% endfor %}
             </ul>        
         </div>
+        {% if invitations|length == 0 %}
+            <p class="uk-margin-left">You don't have any dashboards.</p>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

@@ -221,22 +221,24 @@ def user_logout():
 def user_dashboards():
     # BACKEND TODO: fetch all dashboards of a user
     # need to make a list like the one below
-    dashboards = [
-        {
-            "id" : 1,
-            "name" : "Hogwarts City Corporation",
-            "type" : "administration"
-        },
-        {
-            "id" : 1,
-            "name" : "Hogwarts Hospital",
-            "type" : "institution"
-        },
-        {
-            "id" : 2,
-            "name" : "Hogwarts COVID Camp",
-            "type" : "institution"
-        }]
+    dashboards = []
+    boards = db.session.query(Member).filter(Member.userid == session['email']).all()
+    for board in boards:
+        dashboard_name = ""
+        type = board.type
+        if type == "administration":
+            admin = db.session.query(Administration).filter(Administration.doff_id == board.dashboard_id).scalar()
+            dashboard_name = admin.name
+        else:
+            hospital = db.session.query(Hospital).filter(Hospital.hospital_id == board.dashboard_id).scalar()
+            dashboard_name = hospital.name
+
+        dashboards.append({
+            "id" : board.dashboard_id,
+            "name" : dashboard_name,
+            "type" : board.type
+        })
+
     return render_template("user/dashboards.html", dashboards = dashboards)
 
 @app.route("/institution/create", methods=['GET', 'POST'])
@@ -256,10 +258,14 @@ def institution_create():
             phone_admin = data['phone_admin'],
             admin = session['email']
             )
-
         db.session.add(institution)
+        db.session.flush()
+
+        member_add = Member(session['email'], "institution", institution.hospital_id)
+        db.session.add(member_add)
+
         db.session.commit()
-        return user_dashboards()
+        return redirect(url_for('user_dashboards'))
     return render_template("institution/create.html")
 
 def get_institution_entity(id):
@@ -416,10 +422,13 @@ def administration_create():
             region = data['region'],
             admin = session['email']
         )
-
         db.session.add(administration)
+        db.session.flush()
+
+        member_add = Member(session['email'], "administration", administration.doff_id)
+        db.session.add(member_add)
         db.session.commit()
-        return user_dashboards()
+        return redirect(url_for('user_dashboards'))
 
     return render_template("administration/create.html")
 
