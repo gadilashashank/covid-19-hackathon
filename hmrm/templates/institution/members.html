@@ -62,11 +62,14 @@
                                 <tr>
                                     <td><a class="uk-link-muted uk-text-underline" href="/user/{{invite.userid}}"><u>{{ invite.name }}</u></a></td>
                                     <td>{{ invite.created }}</td>
-                                    <td><button class="uk-button uk-button-default uk-label-danger" type="button">Cancel</button></td>
-                                </tr>
+                                    <td><form action="/institution/{{current_institution.id}}/members?inviteid={{invite.inviteid}}" method="post"><button type="submit" method="post" class="uk-button uk-button-default uk-label-danger" type="button">Cancel</button></form></td>
+                                  </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
+                        {% if invitations|length == 0 %}
+                        <p class="uk-margin-left">No invitations.</p>
+                        {% endif %}
                     </div>
                 </div>
             </div>

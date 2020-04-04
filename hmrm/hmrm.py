@@ -276,19 +276,27 @@ def get_institution_entity(id):
 def institution_overview(id):
     return render_template("institution/overview.html", current_institution = get_institution_entity(id))
 
-@app.route("/institution/<int:id>/members")
+@app.route("/institution/<int:id>/members", methods=["POST", "GET"])
 @login_required
 def institution_members(id):
-    invitations = [{
-      "name" : "Hermi",
-      "userid" : 12,
-      "created" : "04 April 2020 17:24 IST",
-    },
-    {
-      "name" : "Albus Dumbledore",
-      "userid" : 15,
-      "created" : "04 April 2020 18:34 IST",
-    }]
+    if request.method == "POST":
+        id = request.args["inviteid"]
+        Invitation.query.filter_by(inviteid=id).delete()
+        db.session.commit()
+        return redirect(url_for('institution_members', id = id))
+
+    invitations = []
+
+    invs = db.session.query(Invitation).filter((Invitation.dashboard_id == id) & (Invitation.type == "institution")).all()
+    for invitation in invs:
+        target = db.session.query(Users).filter(Users.email == invitation.to_user).first()
+        invitations.append({
+            "name" : target.fname + ' ' + target.lname,
+            "userid" : target.user_id,
+            "created" : invitation.invited_date,
+            "inviteid" : invitation.inviteid
+        })
+
     return render_template("institution/members.html", current_institution = get_institution_entity(id), invitations = invitations)
 
 @app.route("/institution/<int:id>/information")
