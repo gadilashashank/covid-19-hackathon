@@ -74,7 +74,7 @@ class Hospital(db.Model):
 class Patient(db.Model):
     patient_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
-    sex = db.Column(db.String(1))
+    sex = db.Column(db.String(10))
     hospital_id = db.Column(db.Integer, db.ForeignKey(
         Hospital.hospital_id, ondelete="CASCADE"), nullable=False)
     hospital_ref = db.relationship(
@@ -90,15 +90,23 @@ class Patient(db.Model):
 class History_patient(db.Model):
     __tablename__ = 'history_patient'
     patient_id_rec = db.Column(db.Integer, primary_key = True,
-                nullable = False, autoincrement=True)
+                 nullable = False, autoincrement=True)
     # patient_id = db.Column(db.Integer, nullable = False)
     date = db.Column(db.DateTime)
     condition = db.Column(db.Enum("state_patient"))
     patient_id = db.Column(db.Integer, db.ForeignKey(
         Patient.patient_id, ondelete="CASCADE"), nullable = False)
-    
+
     def __init__(self,patient_id, condition):
         self.date = DATE.today()
         self.patient_id = patient_id
         self.condition = condition
 
+
+class Administration(db.Model):
+    
+    doff_id = db.Column(db.Integer, primary_key = True, nullable = False, 
+            autoincrement = True)
+    region = db.Column(db.String(50))
+    name = db.Column(db.String(100))
+    sname = db.Column(db.String(30))

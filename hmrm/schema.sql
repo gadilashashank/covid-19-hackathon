@@ -49,12 +49,14 @@ create table patients
 
 create table administration
 (
-    doff_id int primary key not null,
-    off_id int references users(user_id),
+    doff_id serial primary key not null,
+    name varchar(100),
+    sname varchar(30),
+    -- off_id int references users(user_id),
 --    "Need to make a better location thing"
-    state varchar(30),
-    district varchar(50),
-    designation varchar(50)
+    --state varchar(30),
+    --district varchar(50),
+    region varchar(50)
 );
 
 create table history_hospital
