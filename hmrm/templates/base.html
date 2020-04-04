@@ -33,7 +33,7 @@
                             </ul>               
                         </div>
                         <div class="uk-navbar-right uk-margin-large-right">
-                            {% if not (current_user.is_authenticated)%}
+                            {% if not session['is_authenticated'] %}
                             <ul class="uk-navbar-nav">
                                 <li><a href="/user/login">Login</a></li>
                                 <li><a href="/user/register">Register</a></li>
@@ -41,7 +41,7 @@
                             {% else %}
                             <ul class="uk-navbar-nav">
                                 <li class="uk-active">
-                                    <a href="#">Hi {{current_user.first_name}} &nbsp;<span uk-icon="chevron-down"></span></a>
+                                    <a href="#">Hi {{session['first_name']}} &nbsp;<span uk-icon="chevron-down"></span></a>
                                     <div uk-dropdown="pos: bottom-right; mode: click; offset: -17;">
                                         <ul class="uk-nav uk-navbar-dropdown-nav">
                                             <li><a href="/user/dashboards"><span class="uk-margin-small-right" uk-icon="list"></span>Dashboards</a></li>

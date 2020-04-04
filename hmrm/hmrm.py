@@ -165,7 +165,7 @@ def user_login():
     if request.method == 'GET':
         if session.get('is_authenticated') is True:
             return redirect(success_url)
-
+            
     if request.method == 'POST':
         try:
             if session.get('is_authenticated') is True:
@@ -173,9 +173,9 @@ def user_login():
 
             password = request.form['password']
             user_check = Users(email=request.form['email'], password=None, fname=None, lname=None)
-            stored = db.session.query(Users.password).filter_by(email=request.form['useremailname']).scalar()
+            stored = db.session.query(Users.password).filter_by(email=request.form['email']).scalar()
 
-            if bcrypt.check_password_hash(stored, password):
+            if stored is not None and bcrypt.check_password_hash(stored, password):
                 user_check = db.session.query(Users).filter_by(email=request.form['email']).scalar()
                 session['name'] = user_check.fname + ' ' + user_check.lname                
                 session['first_name'] = user_check.fname
@@ -195,28 +195,27 @@ def user_login():
 
 @app.route("/user/register", methods=['GET', 'POST'])
 def user_register():
-    if session.get('is_authenticated') is not True:
-        
-
-    if request.method == 'GET':
-        pass
-    elif request.method == 'POST':
+    session.clear()
+    if request.method == 'POST':
         try:
-            print(request.form.keys)
             if request.form['password'] != request.form['confirm_password']:
                 return render_template("user/register.html", notification="password mismatch", current_user=current_user)
 
             password = request.form['password']
-            print(password)
             hashed = bcrypt.generate_password_hash(password).decode('utf-8')
-            print(hashed)
 
             user_add = Users(
                 request.form['fname'], request.form['lname'],
                 request.form['email'], hashed)
 
             db.session.add(user_add)
-            db.session.commit()            
+            db.session.commit()
+
+            session['name'] = user_check.fname + ' ' + user_check.lname                
+            session['first_name'] = user_check.fname
+            session['last_name'] = user_check.lname
+            session['email'] = user_check.email
+            session['is_authenticated'] = True         
             return index()
 
         except KeyError as e:
@@ -226,10 +225,9 @@ def user_register():
 
     return render_template("user/register.html", current_user=current_user)
 
-
 @app.route("/user/logout")
 def user_logout():
-    session["is_authenticated"] = False
+    session.clear()
     return index()
 
 @app.route("/user/dashboards")
