@@ -231,7 +231,7 @@ def get_institution_entity(id):
     entity = {
         "name": hospital.name,
         "shortname" : hospital.sname,
-        "id": hospital.hospital_id,
+        "id": id,
         "email_admin" : hospital.email_admin,
         "email_lab" : hospital.email_lab,
         "phone_admin" : hospital.phone_admin,
@@ -279,11 +279,24 @@ def institution_overview(id):
 @app.route("/institution/<int:id>/members", methods=["POST", "GET"])
 @login_required
 def institution_members(id):
+    invite_error = None
     if request.method == "POST":
-        id = request.args["inviteid"]
-        Invitation.query.filter_by(inviteid=id).delete()
-        db.session.commit()
-        return redirect(url_for('institution_members', id = id))
+        if "inviteid" in request.args:
+            # cancelling an invite
+            inviteid = request.args["inviteid"]
+            Invitation.query.filter_by(inviteid=inviteid).delete()
+            db.session.commit()
+            return redirect(url_for('institution_members', id = id))
+        elif "sendinvite" in request.args:
+            # sending an invite
+            user_check = db.session.query(Users).filter(Users.email == request.form["email"]).first()
+            if user_check == None:
+                invite_error = "user does not exist"
+            else:
+                invite_add = Invitation(request.form["email"], session["email"], "institution", id)
+                db.session.add(invite_add)
+                db.session.commit()
+                return redirect(url_for('institution_members', id = id))
 
     invitations = []
 
@@ -297,7 +310,7 @@ def institution_members(id):
             "inviteid" : invitation.inviteid
         })
 
-    return render_template("institution/members.html", current_institution = get_institution_entity(id), invitations = invitations)
+    return render_template("institution/members.html", current_institution = get_institution_entity(id), invitations = invitations, invite_error = invite_error)
 
 @app.route("/institution/<int:id>/information")
 @login_required

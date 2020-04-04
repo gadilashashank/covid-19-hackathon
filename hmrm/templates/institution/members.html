@@ -24,22 +24,22 @@
             <div>
                 <div class="uk-card uk-card-default">
                     <div class="uk-card-body">
-                        {% if invite_error is defined %}
+                        <h3>Invite</h3>
+                        {% if invite_error is defined and invite_error is not none %}
                             <div class="uk-alert-danger" uk-alert>
                                 <a class="uk-alert-close" uk-close></a>
                                 <p>{{invite_error}}</p>
                             </div>
                         {% endif %}
-                        <h3>Invite</h3>
-                        <form method="post">
+                        <form action="/institution/{{current_institution.id}}/members?sendinvite=1" method="post">
                             <div class="uk-margin">
-                            <div class="uk-inline uk-width-1-1">
-                                <span class="uk-form-icon" uk-icon="icon: user"></span>
-                                <input class="uk-input uk-form-large" type="text" placeholder="email" name="email">
-                            </div>
+                              <div class="uk-inline uk-width-1-1">
+                                  <span class="uk-form-icon" uk-icon="icon: user"></span>
+                                  <input class="uk-input uk-form-large" type="text" placeholder="email" name="email">
+                              </div>
                             </div>
                             <div class="uk-margin">
-                            <button type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">Invite</button>
+                              <button type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">Invite</button>
                             </div>
                         </form>
                     </div>
