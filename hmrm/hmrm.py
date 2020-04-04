@@ -318,16 +318,16 @@ def institution_create():
     return render_template("institution/create.html", current_user=current_user)
 
 @app.route("/institution/<int:id>/overview")
-@login_required
+# @login_required
 def institution_overview(id):
-    hospital = db.session.query(Hospital).where(Hospital.hospital_id == id).first()
+    hospital = db.session.query(Hospital).filter(Hospital.id == id).first()
 
-    dead_patients = db.session.query(Patient).where(Patient.hospital_id == id).where(Patient.condition == "DEAD").sum()
-    suspected_patients = db.session.query(Patient).where(Patient.hospital_id == id).where(Patient.condition == "SUSPECTED").sum()
-    recovered_patients = db.session.query(Patient).where(Patient.hospital_id == id).where(Patient.condition == "RECOVERED   ").sum()
-    active_patients = db.session.query(Patient).where(Patient.hospital_id == id).where(Patient.condition == "ACTIVE").sum()
+    dead_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "DEAD").sum()
+    suspected_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "SUSPECTED").sum()
+    recovered_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "RECOVERED   ").sum()
+    active_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "ACTIVE").sum()
 
-    history = db.session.query(History).where(History.hospital_id == id).order_by(date).all()
+    history = db.session.query(History).filter(History.id == id).order_by(date).all()
 
     active = []
     recovered = []
@@ -339,7 +339,7 @@ def institution_overview(id):
 
     entity = {
         "name": hospital.name,
-        "id": hospital.hospital_id,
+        "id": hospital.id,
         "cases": {
             "active": active,
             "recovered": recovered_patients,
