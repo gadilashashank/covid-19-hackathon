@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, request, Flask, session, abort, re
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
-from hmrm.models import db, Users, Hospital
+from hmrm.models import db, Users, Hospital, Patient, History
 # from models import db, Users, Hospital
 
 # app = Blueprint("hmrm", __name__, static_folder="static/")
@@ -116,29 +116,6 @@ current_admin = {
     },
 
     "objects" : current_objects
-}
-
-current_institution = {
-    "name" : "Hogwarts Central Hospital",
-    "id" : 1,
-    "shortname" : "HogwartsCentral",
-    "type" : "institution",
-    "cases" : {
-        "suspected" : 64,
-        "suspected_increment" : 12,
-        "active" : 1432,
-        "active_increment" : 1432 - 1244,
-        "recovered" : 74,
-        "recovered_increment" : 4,
-        "fatal" : 16,
-        "fatal_increment" : 2
-    },
-
-    "history" : {
-        "active" : [62, 109, 450, 683, 892, 1043, 1244, 1432],
-        "recovered" : [4, 8, 12, 24, 44, 67, 70, 74],
-        "fatal" : [0, 0, 0, 1, 6, 12, 14, 16],
-    },
 }
 
 # decorator for requiring login to access a page
@@ -268,11 +245,8 @@ def user_dashboards():
 @app.route("/institution/create", methods=['GET', 'POST'])
 @login_required
 def institution_create():
-    print("ASDADADADADADADADADADADADADASDADADADA")
-    print(request.method)
     if request.method == "POST":
         data = request.form
-        print(data.keys())
         institution = Hospital(
             name = data['name'],
             sname = data['sname'],
@@ -291,83 +265,81 @@ def institution_create():
             phone_admin = data['phone_admin'],
             admin = session['email']
             )
-        print("HELLLLLLO")
         # I am not adding checks for now. Will add later. Very fragile
         db.session.add(institution)
-        print("STONKSSS")
         db.session.commit()
-        print("TOINK")
         return jsonify({"status": "success"})
     return render_template("institution/create.html")
 
-# def get_institution_entity(id):
-#     hospital = db.session.query(Hospital).filter(Hospital.id == id).first()
+def get_institution_entity(id):
+    hospital = db.session.query(Hospital).filter(Hospital.hospital_id == id).first()
 
-#     dead_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "DEAD").sum()
-#     suspected_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "SUSPECTED").sum()
-#     recovered_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "RECOVERED   ").sum()
-#     active_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "ACTIVE").sum()
+    dead_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "DEAD")
+    print(dead_patients)
+    suspected_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "SUSPECTED").sum()
+    recovered_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "RECOVERED").sum()
+    active_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "ACTIVE").sum()
 
-#     history = db.session.query(History).filter(History.id == id).order_by(date).all()
+    history = db.session.query(History).filter(History.id == id).order_by(date).all()
 
-#     suspected = []
-#     active = []
-#     recovered = []
-#     fatal = []
-#     for i in history:
-#         suspected.append(i.suspected)
-#         active.append(i.active)
-#         recovered.append(i.recovered)
-#         fatal.append(i.fatal)
+    suspected = []
+    active = []
+    recovered = []
+    fatal = []
+    for i in history:
+        suspected.append(i.suspected)
+        active.append(i.active)
+        recovered.append(i.recovered)
+        fatal.append(i.fatal)
 
-#     suspected_increment = 0
-#     active_increment = 0
-#     recovered_increment = 0
-#     fatal_increment = 0
+    suspected_increment = 0
+    active_increment = 0
+    recovered_increment = 0
+    fatal_increment = 0
 
-#     if len(suspected) > 1:
-#         suspected_increment = suspected[-1] - suspected[-2]
+    if len(suspected) > 1:
+        suspected_increment = suspected[-1] - suspected[-2]
 
-#     if len(active) > 1:
-#         active_increment = active[-1] - active[-2]
+    if len(active) > 1:
+        active_increment = active[-1] - active[-2]
 
-#     if len(recovered) > 1:
-#         recovered_increment = recovered[-1] - recovered[-2]
+    if len(recovered) > 1:
+        recovered_increment = recovered[-1] - recovered[-2]
 
-#     if len(suspected) > 1:
-#         fatal_increment = fatal[-1] - fatal[-2]
-        
-#     entity = {
-#         "name": hospital.name,
-#         "shortname" : hospital.sname,
-#         "id": hospital.id,
-#         "email_admin" : hospital.email_admin,
-#         "email_lab" : hospital.email_lab,
-#         "phone_admin" : hospital.phone_admin,
-#         "phone_lab" : hospital.phone_lab,
-#         "address" : hospital.address,
-#         "type" : "institution",
-#         "patient_capacity" : hospital.max_bed,
-#         "testing_capacity" : hospital.testing_capacity,
-#         "cases": {
-#             "suspected": suspected_patients,
-#             "suspected_increment": suspected_increment,
-#             "active": active_patients,
-#             "active_increment": active_increment,
-#             "recovered": recovered_patients,
-#             "recovered_increment": recovered_increment,
-#             "fatal": dead_patients,
-#             "fatal_increment": fatal_increment            
-#         },
+    if len(suspected) > 1:
+        fatal_increment = fatal[-1] - fatal[-2]
+    
+    entity = {
+        "name": hospital.name,
+        "shortname" : hospital.sname,
+        "id": hospital.hospital_id,
+        "email_admin" : hospital.email_admin,
+        "email_lab" : hospital.email_lab,
+        "phone_admin" : hospital.phone_admin,
+        "phone_lab" : hospital.phone_lab,
+        "address" : hospital.address,
+        "type" : "institution",
+        "patient_capacity" : hospital.max_bed,
+        "testing_capacity" : hospital.testing_capacity,
+        "cases": {
+            "suspected": suspected_patients,
+            "suspected_increment": suspected_increment,
+            "active": active_patients,
+            "active_increment": active_increment,
+            "recovered": recovered_patients,
+            "recovered_increment": recovered_increment,
+            "fatal": dead_patients,
+            "fatal_increment": fatal_increment            
+        },
 
-#         "history": {
-#             "active": active,
-#             "recovered": recovered,
-#             "fatal": fatal
-#         }
-#     }
+        "history": {
+            "active": active,
+            "recovered": recovered,
+            "fatal": fatal
+        }
+    }
 
-#     return entity
+    return entity
 
 @app.route("/institution/<int:id>/overview")
 @login_required
@@ -410,7 +382,7 @@ def institution_records_patients(id):
             "ref" : "HOG#15292884"
         }
     ]
-    return render_template("institution/records/patients.html", current_institution = current_institution, find_results = find_results)
+    return render_template("institution/records/patients.html", current_institution = get_institution_entity(id), find_results = find_results)
 
 @app.route("/administration/create")
 @login_required
