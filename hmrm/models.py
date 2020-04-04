@@ -1,5 +1,8 @@
-from hmrm import db
 from sqlalchemy.dialects.postgresql import JSON
+from flask_sqlalchemy import SQLAlchemy
+
+
+db = SQLAlchemy()
 
 
 class Users(db.Model):

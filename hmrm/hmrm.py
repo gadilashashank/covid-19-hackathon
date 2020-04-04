@@ -3,6 +3,7 @@ from flask import Blueprint, render_template, request, Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
+from hmrm.models import db, Users
 
 # app = Blueprint("hmrm", __name__, static_folder="static/")
 app = Flask(__name__)
@@ -10,7 +11,6 @@ app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 
-db = SQLAlchemy(app)
 
 bcrypt = Bcrypt(app)
 
