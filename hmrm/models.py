@@ -1,5 +1,8 @@
-from hmrm import db
 from sqlalchemy.dialects.postgresql import JSON
+from flask_sqlalchemy import SQLAlchemy
+
+
+db = SQLAlchemy()
 
 
 class Users(db.Model):
@@ -18,7 +21,8 @@ class Users(db.Model):
         self.password = password
 
     def __repr__(self):
-        return '<id {}>'.format(self.id)
+        # return '<id {}>'.format(self.user_id)
+        return self
 
     def serialize(self):
         return {
