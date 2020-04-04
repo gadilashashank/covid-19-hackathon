@@ -1,13 +1,13 @@
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 
-from hmrm import app, db
+import hmrm
 
-migrate = Migrate(app, db)
-manager = Manager(app)
+migrate = Migrate(hmrm.app, hmrm.db)
+manager = Manager(hmrm.app)
 
 manager.add_command('db', MigrateCommand)
 
 
-if __name__ == '__main__':
+if __name__ == '_main_':
     manager.run()
