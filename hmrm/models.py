@@ -37,14 +37,14 @@ class Users(db.Model):
 class Hospital(db.Model):
     __tablename__ = 'hospitals'
 
-    hospital_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80))
-    sname = db.Column(db.String(80))
+    hospital_id = db.Column(db.Integer, primary_key=True,autoincrement=True )
+    name = db.Column(db.String(80) , nullable = False)
+    sname = db.Column(db.String(80), nullable = False)
     address = db.Column(db.String(200))
     email_admin = db.Column(db.String(330))
     email_lab= db.Column(db.String(330))
-    phone_lab= db.Column(db.String(30))
-    phone_admin= db.Column(db.String(30))
+    phone_lab= db.Column(db.String(30), nullable = False)
+    phone_admin= db.Column(db.String(30), nullable = False)
     max_bed = db.Column(db.Integer)
     current_bed = db.Column(db.Integer)
     state = db.Column(db.String(80))
