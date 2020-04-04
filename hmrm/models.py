@@ -53,11 +53,11 @@ class Hospital(db.Model):
 
     
     def __init__(self, name, sname, email_admin, phone_admin,
-            phone_lab, email_lab, max_bed, testing_capacity, address, admin): 
+            phone_lab, email_lab, patient_capacity, testing_capacity, address, admin): 
         #, district, state):
         self.name = name
         self.sname = sname
-        self.max_bed = max_bed
+        self.patient_capacity = patient_capacity
         self.testing_capacity = testing_capacity
         self.address = address
         self.email_admin = email_admin

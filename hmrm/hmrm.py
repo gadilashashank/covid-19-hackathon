@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, request, Flask, session, abort, re
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
-from hmrm.models import db, Users, Hospital, Patient, History_patient
+from hmrm.models import db, Users, Hospital, Patient, History_patient, Administration
 # from models import db, Users, Hospital
 
 # app = Blueprint("hmrm", __name__, static_folder="static/")
@@ -226,12 +226,6 @@ def institution_create():
             name = data['name'],
             sname = data['sname'],
             patient_capacity = data['patient_capacity'],
-            # current_beds = data['current_bed'],
-            # state = data['state'],
-            # district = data['district'],
-            # num_ventilators = data['num_ventilators'],
-            # mask_needed = data['num_needed'],
-            # num_testing_kits = data['num_testing_kits'],
             testing_capacity = data['testing_capacity'], # Per day capacity
             address = data['address'],
             email_admin = data['email_admin'],
@@ -240,16 +234,16 @@ def institution_create():
             phone_admin = data['phone_admin'],
             admin = session['email']
             )
-        # I am not adding checks for now. Will add later. Very fragile
+
         db.session.add(institution)
         db.session.commit()
-        return jsonify({"status": "success"})
+        return user_dashboards()
     return render_template("institution/create.html")
 
 def get_institution_entity(id):
     hospital = db.session.query(Hospital).filter(Hospital.hospital_id == id).first()
 
-    dead_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "DEAD").sum()
+    dead_patients = db.session.query(Patient).filter(Patient.patient_id == id, Patient.condition == "DEAD").sum()
     suspected_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "SUSPECTED").sum()
     recovered_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "RECOVERED").sum()
     active_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "ACTIVE").sum()
@@ -359,10 +353,10 @@ def institution_records_patients(id):
     return render_template("institution/records/patients.html", current_institution = get_institution_entity(id), find_results = find_results)
 
 def get_administration_entity(id):
-    administration = db.session.query(Administration).filter(Administration.id == id).first()
+    administration = db.session.query(Administration).filter(Administration.doff_id == id).first()
 
     entity = {
-        "id" : administration.id,
+        "id" : administration.doff_id,
         "name" : administration.name,
         "shortname" : administration.sname,
 
