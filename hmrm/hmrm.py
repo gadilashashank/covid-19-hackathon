@@ -1,7 +1,7 @@
 import os
 from flask import Blueprint, render_template, request, Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask.ext.bcrypt import Bcrypt
+from flask_bcrypt import Bcrypt
 
 
 # app = Blueprint("hmrm", __name__, static_folder="static/")
