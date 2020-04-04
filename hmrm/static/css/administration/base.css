@@ -5,11 +5,12 @@
     min-height: calc(100% - 80px);
     background-color: #F0F0F0;
 }
+
 .statistics-text {
     font-size: 25px;
 }
 .statistics-number {
-    font-size: 50px;
+    font-size: 40px;
 }
 
 .tm-sidebar-left {

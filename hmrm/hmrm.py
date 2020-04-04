@@ -151,6 +151,8 @@ current_admin = {
         "recovered" : [4, 8, 12, 24, 44, 67, 70, 74],
         "fatal" : [0, 0, 0, 1, 6, 12, 14, 16],
     },
+
+    "objects" : current_objects
 }
 
 current_institution = {
