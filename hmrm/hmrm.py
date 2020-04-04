@@ -41,18 +41,20 @@ current_entity = {
     "shortname" : "Hogwarts",
     "type" : "admnistration",
     "cases" : {
+        "suspected" : 64,
+        "suspected_increment" : 12,
         "active" : 1432,
         "active_increment" : 1432 - 1244,
         "recovered" : 74,
         "recovered_increment" : 4,
-        "deaths" : 16,
-        "deaths_increment" : 2 
+        "fatal" : 16,
+        "fatal_increment" : 2
     },
 
     "history": {
         "active": [62, 109, 450, 683, 892, 1043, 1244, 1432],
         "recovered": [4, 8, 12, 24, 44, 67, 70, 74],
-        "deaths": [0, 0, 0, 1, 6, 12, 14, 16],
+        "fatal": [0, 0, 0, 1, 6, 12, 14, 16],
     }
 }
 
@@ -63,18 +65,20 @@ current_entity2 = {
     "type" : "institution",
     "capacity" : 1000,
     "cases" : {
+        "suspected" : 64,
+        "suspected_increment" : 12,
         "active" : 1432,
         "active_increment" : 1432 - 1244,
         "recovered" : 74,
         "recovered_increment" : 4,
-        "deaths" : 16,
-        "deaths_increment" : 2 
+        "fatal" : 16,
+        "fatal_increment" : 2 
     },
 
     "history" : {
         "active" : [62, 109, 450, 683, 892, 1043, 1244, 1432],
         "recovered" : [4, 8, 12, 24, 44, 67, 70, 74],
-        "deaths" : [0, 0, 0, 1, 6, 12, 14, 16],
+        "fatal" : [0, 0, 0, 1, 6, 12, 14, 16],
     }
 }
 
@@ -85,18 +89,20 @@ current_entity3 = {
     "type" : "institution",
     "capacity" : 1000,
     "cases" : {
+        "suspected" : 64,
+        "suspected_increment" : 12,
         "active" : 56,
         "active_increment" : 4,
         "recovered" : 4,
         "recovered_increment" : 2,
-        "deaths" : 1,
-        "deaths_increment" : 1 
+        "fatal" : 1,
+        "fatal_increment" : 1 
     },
 
     "history" : {
         "active" : [62, 109, 450, 683, 892, 1043, 1244, 1432],
         "recovered" : [4, 8, 12, 24, 44, 67, 70, 74],
-        "deaths" : [0, 0, 0, 1, 6, 12, 14, 16],
+        "fatal" : [0, 0, 0, 1, 6, 12, 14, 16],
     }
 }
 
@@ -107,18 +113,20 @@ current_entity4 = {
     "type" : "institution",
     "capacity" : 100,
     "cases" : {
+        "suspected" : 64,
+        "suspected_increment" : 12,
         "active" : 82,
         "active_increment" : 4,
         "recovered" : 14,
         "recovered_increment" : 2,
-        "deaths" : 7,
-        "deaths_increment" : 1 
+        "fatal" : 7,
+        "fatal_increment" : 1 
     },
 
     "history" : {
         "active" : [62, 109, 450, 683, 892, 1043, 1244, 1432],
         "recovered" : [4, 8, 12, 24, 44, 67, 70, 74],
-        "deaths" : [0, 0, 0, 1, 6, 12, 14, 16],
+        "fatal" : [0, 0, 0, 1, 6, 12, 14, 16],
     }
 }
 
@@ -128,18 +136,20 @@ current_admin = {
     "shortname" : "HogwartsCity",
     "type" : "admnistration",
     "cases" : {
+        "suspected" : 64,
+        "suspected_increment" : 12,
         "active" : 1432,
         "active_increment" : 1432 - 1244,
         "recovered" : 74,
         "recovered_increment" : 4,
-        "deaths" : 16,
-        "deaths_increment" : 2 
+        "fatal" : 16,
+        "fatal_increment" : 2 
     },
 
     "history" : {
         "active" : [62, 109, 450, 683, 892, 1043, 1244, 1432],
         "recovered" : [4, 8, 12, 24, 44, 67, 70, 74],
-        "deaths" : [0, 0, 0, 1, 6, 12, 14, 16],
+        "fatal" : [0, 0, 0, 1, 6, 12, 14, 16],
     },
 }
 
@@ -149,18 +159,20 @@ current_institution = {
     "shortname" : "HogwartsCentral",
     "type" : "institution",
     "cases" : {
+        "suspected" : 64,
+        "suspected_increment" : 12,
         "active" : 1432,
         "active_increment" : 1432 - 1244,
         "recovered" : 74,
         "recovered_increment" : 4,
-        "deaths" : 16,
-        "deaths_increment" : 2 
+        "fatal" : 16,
+        "fatal_increment" : 2 
     },
 
     "history" : {
         "active" : [62, 109, 450, 683, 892, 1043, 1244, 1432],
         "recovered" : [4, 8, 12, 24, 44, 67, 70, 74],
-        "deaths" : [0, 0, 0, 1, 6, 12, 14, 16],
+        "fatal" : [0, 0, 0, 1, 6, 12, 14, 16],
     },
 }
 
@@ -279,10 +291,56 @@ def institution_create():
 def institution_overview(id):
     return render_template("institution/overview.html", current_user = current_user, current_institution = current_institution)
 
+@app.route("/institution/<int:id>/members")
+@login_required
+def institution_members(id):
+    invitations = [{
+      "name" : "Hermi",
+      "userid" : 12,
+      "created" : "04 April 2020 17:24 IST",  
+    },
+    {
+      "name" : "Albus Dumbledore",
+      "userid" : 15,
+      "created" : "04 April 2020 18:34 IST",  
+    }]
+    return render_template("institution/members.html", current_user = current_user, current_institution = current_institution, invitations = invitations)
+
+@app.route("/institution/<int:id>/information")
+@login_required
+def institution_information(id):
+    contact_info = {
+        "phone_admin" : 987654321,
+        "phone_lab" :   989762343,
+        "email_admin" : "admin@hogwarts.med",
+        "email_lab" : "lab@hogwarts.med",
+        "address" : "hogwarts"
+    }
+
+    capacity_info = {
+        "patient_capacity" : 1000,
+        "testing_capacity" : 0,
+    }
+
+    return render_template("institution/information.html", current_user = current_user, current_institution = current_institution, capacity_info = capacity_info, contact_info = contact_info)
+
 @app.route("/institution/<int:id>/records/patients")
 @login_required
 def institution_records_patients(id):
-    return render_template("institution/records/patients.html", current_user = current_user, current_institution = current_institution)
+    # BACKEND TODO limit to top ten results
+    find_results = [
+        {
+            "recordid" : 1,
+            "name" : "Albus Dumbledore",
+            "ref" : "HOG#15292883"
+        },
+        {
+            "recordid" : 2,
+            "name" : "Albuz Zumbledore",
+            "ref" : "HOG#15292884"
+        }
+    ]
+    return render_template("institution/records/patients.html", current_user = current_user, current_institution = current_institution, find_results = find_results)
 
 @app.route("/administration/create")
 @login_required

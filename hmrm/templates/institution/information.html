@@ -1,0 +1,101 @@
+{% extends '/institution/base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/css/institution/base.css"/>
+<link rel="stylesheet" href="/static/css/institution/members.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vuetable-2@1.7.5/dist/vuetable-2.css" />
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetable-2@1.7.5/dist/vuetable-2.js"></script>
+
+{% endblock %}
+
+{% block breadcrumb_list %}
+<li><span href=#>Information</span></li>
+{% endblock %}
+
+{% block right_content %}
+<div class="uk-section-small">
+    <div class="uk-container uk-container-large">
+        <div uk-grid class="uk-child-width-1-1@s uk-child-width-1-2@l">
+            <div>
+                <div class="uk-card uk-card-default">
+                    <div class="uk-card-body">
+                        <h3>Contact</h3>
+                        <form method="post">
+                            <div class="uk-margin">
+                                <label>Phone (Administration):</label>
+                                <div class="uk-inline uk-width-1-1">
+                                    <span class="uk-form-icon" uk-icon="icon: user"></span>
+                                    <input class="uk-input uk-form-large" type="phone" placeholder="{{contact_info.phone_admin}}" name="phone_admin">
+                                </div>
+                            </div>
+                            <div class="uk-margin">
+                                <label>Phone (Lab):</label>
+                                <div class="uk-inline uk-width-1-1">
+                                    <span class="uk-form-icon" uk-icon="icon: user"></span>
+                                    <input class="uk-input uk-form-large" type="phone" placeholder="{{contact_info.phone_lab}}" name="phone_lab">
+                                </div>
+                            </div>
+                            <div class="uk-margin">
+                                <label>Email (Administration):</label>
+                                <div class="uk-inline uk-width-1-1">
+                                    <span class="uk-form-icon" uk-icon="icon: user"></span>
+                                    <input class="uk-input uk-form-large" type="email" placeholder="{{contact_info.email_admin}}" name="email_admin">
+                                </div>
+                            </div>
+                            <div class="uk-margin">
+                                <label>Email (Lab):</label>
+                                <div class="uk-inline uk-width-1-1">
+                                    <span class="uk-form-icon" uk-icon="icon: user"></span>
+                                    <input class="uk-input uk-form-large" type="email" placeholder="{{contact_info.email_lab}}" name="email_admin">
+                                </div>
+                            </div>
+                            <div class="uk-margin">
+                                <label>Address:</label>
+                                <div class="uk-inline uk-width-1-1">
+                                    <span class="uk-form-icon" uk-icon="icon: user"></span>
+                                    <input class="uk-input uk-form-large" type="text" placeholder="{{contact_info.address}}" name="address">
+                                </div>
+                            </div>
+                            <div class="uk-margin">
+                                <button type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">Update</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="uk-card uk-card-default">
+                    <div class="uk-card-body">
+                        <h3>Capacity</h3>
+                        <form method="post">
+                            <div class="uk-margin">
+                                <label>Patient capacity:</label>
+                                <div class="uk-inline uk-width-1-1">
+                                    <span class="uk-form-icon" uk-icon="icon: user"></span>
+                                    <input class="uk-input uk-form-large" type="number" placeholder="{{capacity_info.patient_capacity}}" name="patient_capacity">
+                                </div>
+                            </div>
+                            <div class="uk-margin">
+                                <label>Testing capacity:</label>
+                                <div class="uk-inline uk-width-1-1">
+                                    <span class="uk-form-icon" uk-icon="icon: user"></span>
+                                    <input class="uk-input uk-form-large" type="number" placeholder="{{capacity_info.testing_capacity}}" name="testing_capacity">
+                                </div>
+                            </div>
+                            <div class="uk-margin">
+                            <button type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">Update</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

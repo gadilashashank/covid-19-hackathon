@@ -24,7 +24,7 @@
                     <div>
                       <div class="uk-card uk-card-default uk-card-body">
                           <span class="statistics-text">Total Cases</span><br />
-                          <span class="statistics-number">{{ current_entity.cases.active + current_entity.cases.recovered + current_entity.cases.deaths }}</span>
+                          <span class="statistics-number">{{ current_entity.cases.active + current_entity.cases.recovered + current_entity.cases.fatal }}</span>
                       </div>
                     </div>  
                     <div>
@@ -47,10 +47,10 @@
                     </div>
                     <div>
                         <div class="uk-card uk-card-default uk-card-body">
-                            <span class="statistics-text">Deaths</span><br/>
+                            <span class="statistics-text">Fatal</span><br/>
                             <span class="statistics-number">
-                              {{ current_entity.cases.deaths }}
-                              <span class="uk-label uk-label-danger">+{{ current_entity.cases.deaths_increment }}</span>
+                              {{ current_entity.cases.fatal }}
+                              <span class="uk-label uk-label-danger">+{{ current_entity.cases.fatal_increment }}</span>
                             </span>
                         </div>
                     </div>
@@ -79,7 +79,7 @@
                 <div>
                     <div class="uk-card uk-card-default">
                       <div class="uk-card-header">
-                        Deaths
+                        Fatal
                       </div>
                       <div class="uk-card-body">
                         <canvas id="death_chart"></canvas>
@@ -138,11 +138,11 @@
     }]
   };
 
-  var deaths_data ={
-    labels: Array.apply(null, {length: {{ current_entity.history.deaths|length }}}).map(function(value, index){ return index + 1; }),
+  var fatal_data ={
+    labels: Array.apply(null, {length: {{ current_entity.history.fatal|length }}}).map(function(value, index){ return index + 1; }),
     datasets: [{
-      label: 'deaths',
-      data: {{ current_entity.history.deaths }},
+      label: 'fatal',
+      data: {{ current_entity.history.fatal }},
       backgroundColor: "#ff4d4d",
       borderColor: "#cc0000"
     }]
@@ -190,7 +190,7 @@
   var ctx = document.getElementById("death_chart").getContext('2d');
   var death_chart = new Chart(ctx, {
     type: 'line',
-    data: deaths_data,
+    data: fatal_data,
     options: options
   });
 </script>
