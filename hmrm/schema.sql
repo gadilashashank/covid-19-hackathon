@@ -79,7 +79,7 @@ create table history_hospital
 
 create table history_patient
 (
-    patient_id_rec int primary key not null,
+    patient_id_rec serial primary key not null,
     patient_id int not null,
     date date,
     condition state_patient,

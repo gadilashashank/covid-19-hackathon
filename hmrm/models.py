@@ -1,5 +1,6 @@
 from sqlalchemy.dialects.postgresql import JSON
 from flask_sqlalchemy import SQLAlchemy
+from datetime import date as DATE
 
 
 db = SQLAlchemy()
@@ -81,7 +82,6 @@ class Hospital(db.Model):
 
 
 
-
 class Patient(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
@@ -95,3 +95,21 @@ class Patient(db.Model):
     age = db.Column(db.Integer)
     disease = db.Column(db.String(512))
     history = db.Column(db.String(1024))
+
+
+
+class History_patient(db.Model):
+    __tablename__ = 'history_patient'
+    patient_id_rec = db.Column(db.Integer, primary_key = True,
+                nullable = False, autoincrement=True)
+    # patient_id = db.Column(db.Integer, nullable = False)
+    date = db.Column(db.DateTime)
+    condition = db.Column(db.Enum(state_patient))
+    patient_id = db.Column(db.Integer, db.ForeignKey(
+        Patient.patient_id, ondelete="CASCADE"), nullable = False)
+    
+    def __init__(self,patient_id, condition):
+        self.date = DATE.today()
+        self.patient_id = patient_id
+        self.condition = condition
+
