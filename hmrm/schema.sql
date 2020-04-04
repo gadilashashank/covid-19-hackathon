@@ -11,7 +11,7 @@ create table users
 
 create table hospitals
 (
-    hospital_id int primary key not null,  --"This can be something hospitals already have"
+    hospital_id serial primary key not null,
     name varchar(100) not null,
     sname varchar(100) not null,
     admin varchar(330),
@@ -20,18 +20,9 @@ create table hospitals
     address varchar(200),
     email_admin varchar(330),
     email_lab varchar(330),
-    max_bed int,
-    current_bed int,
-    -- "LOCATION to be added more efficiently"
-    state varchar(30),
-    district varchar(50),
-    ventilator int,
-    mask_needed int,-- "I don't know whether this is per day or the total numbers"
-    mask_current int, --"Current Inventory"
-    testing_kits int,
-    capability_day int, --"Capability of doing number of tests"
+    patient_capacity int,
+    testing_capacity int,
     foreign key (admin) references users(email)
-
 );
 
 

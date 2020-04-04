@@ -46,17 +46,8 @@ class Hospital(db.Model):
     email_lab= db.Column(db.String(330))
     phone_lab= db.Column(db.String(30), nullable = False)
     phone_admin= db.Column(db.String(30), nullable = False)
-    max_bed = db.Column(db.Integer)
-    current_bed = db.Column(db.Integer)
-    state = db.Column(db.String(80))
-    district = db.Column(db.String(80))
-    ventilator = db.Column(db.Integer)
-    mask_needed = db.Column(db.Integer)
-    # testing_kits = db.Column(db.Integer)
-    # testing_capacity = db.Column(db.Integer)
-    capability_day =db.Column(db.Integer)
-    # admin = db.relationship(db.String(330), db.ForeignKey('users.email'))
-    # admin = db.relationship("Users", ba
+    patient_capacity = db.Column(db.Integer)
+    testing_capacity = db.Column(db.Integer)
     admin = db.Column(db.String(330), db.ForeignKey(
         Users.email, ondelete="CASCADE"), nullable=False)
 
@@ -79,8 +70,6 @@ class Hospital(db.Model):
         # self.state = state
     # def __repr__(self):
     #     return self
-
-
 
 class Patient(db.Model):
     patient_id = db.Column(db.Integer, primary_key=True)

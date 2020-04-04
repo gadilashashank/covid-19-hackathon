@@ -93,31 +93,6 @@ current_entity4 = {
 
 current_objects = [current_entity2, current_entity3, current_entity4]
 
-current_admin = {
-    "name" : "Hogwarts City",
-    "id" : 0,
-    "shortname" : "HogwartsCity",
-    "type" : "admnistration",
-    "cases" : {
-        "suspected" : 64,
-        "suspected_increment" : 12,
-        "active" : 1432,
-        "active_increment" : 1432 - 1244,
-        "recovered" : 74,
-        "recovered_increment" : 4,
-        "fatal" : 16,
-        "fatal_increment" : 2
-    },
-
-    "history" : {
-        "active" : [62, 109, 450, 683, 892, 1043, 1244, 1432],
-        "recovered" : [4, 8, 12, 24, 44, 67, 70, 74],
-        "fatal" : [0, 0, 0, 1, 6, 12, 14, 16],
-    },
-
-    "objects" : current_objects
-}
-
 # decorator for requiring login to access a page
 def login_required(f):
     @functools.wraps(f)
@@ -250,7 +225,7 @@ def institution_create():
         institution = Hospital(
             name = data['name'],
             sname = data['sname'],
-            max_bed = data['max_bed'],
+            patient_capacity = data['patient_capacity'],
             # current_beds = data['current_bed'],
             # state = data['state'],
             # district = data['district'],
@@ -274,8 +249,7 @@ def institution_create():
 def get_institution_entity(id):
     hospital = db.session.query(Hospital).filter(Hospital.hospital_id == id).first()
 
-    dead_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "DEAD")
-    print(dead_patients)
+    dead_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "DEAD").sum()
     suspected_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "SUSPECTED").sum()
     recovered_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "RECOVERED").sum()
     active_patients = db.session.query(Patient).filter(Patient.id == id, Patient.condition == "ACTIVE").sum()
@@ -319,7 +293,7 @@ def get_institution_entity(id):
         "phone_lab" : hospital.phone_lab,
         "address" : hospital.address,
         "type" : "institution",
-        "patient_capacity" : hospital.max_bed,
+        "patient_capacity" : hospital.patient_capacity,
         "testing_capacity" : hospital.testing_capacity,
         "cases": {
             "suspected": suspected_patients,
@@ -359,7 +333,7 @@ def institution_members(id):
       "userid" : 15,
       "created" : "04 April 2020 18:34 IST",
     }]
-    return render_template("institution/members.html", current_institution = current_institution, invitations = invitations)
+    return render_template("institution/members.html", current_institution = get_institution_entity(id), invitations = invitations)
 
 @app.route("/institution/<int:id>/information")
 @login_required
@@ -384,6 +358,37 @@ def institution_records_patients(id):
     ]
     return render_template("institution/records/patients.html", current_institution = get_institution_entity(id), find_results = find_results)
 
+def get_administration_entity(id):
+    administration = db.session.query(Administration).filter(Administration.id == id).first()
+
+    entity = {
+        "id" : administration.id,
+        "name" : administration.name,
+        "shortname" : administration.sname,
+
+        "type" : "admnistration",
+        "cases" : {
+            "suspected" : 64,
+            "suspected_increment" : 12,
+            "active" : 1432,
+            "active_increment" : 1432 - 1244,
+            "recovered" : 74,
+            "recovered_increment" : 4,
+            "fatal" : 16,
+            "fatal_increment" : 2
+        },
+
+        "history" : {
+            "active" : [62, 109, 450, 683, 892, 1043, 1244, 1432],
+            "recovered" : [4, 8, 12, 24, 44, 67, 70, 74],
+            "fatal" : [0, 0, 0, 1, 6, 12, 14, 16],
+        },
+
+        "objects" : current_objects
+    }
+
+    return entity
+
 @app.route("/administration/create")
 @login_required
 def administration_create():
@@ -392,7 +397,7 @@ def administration_create():
 @app.route("/administration/<int:id>/overview/")
 @login_required
 def administration_overview(id):
-    return render_template("administration/overview.html", current_admin = current_admin)
+    return render_template("administration/overview.html", current_admin = get_administration_entity(id))
 
 @app.route("/administration/<int:id>/members")
 @login_required
@@ -407,10 +412,10 @@ def administration_members(id):
       "userid" : 15,
       "created" : "04 April 2020 18:34 IST",
     }]
-    return render_template("administration/members.html", current_admin = current_admin, invitations = invitations)
+    return render_template("administration/members.html", current_admin =  get_administration_entity(id), invitations = invitations)
 
 @app.route("/administration/<int:admin_id>/view/<int:view_id>")
 @login_required
 def administration_view(admin_id, view_id):
-    return render_template("administration/view.html", current_entity = get_institution_entity(view_id), current_admin = current_admin)
+    return render_template("administration/view.html", current_admin =  get_administration_entity(admin_id), current_entity = get_institution_entity(view_id))
 
