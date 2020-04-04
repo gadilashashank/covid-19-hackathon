@@ -13,6 +13,13 @@ create table hospitals
 (
     hospital_id int primary key not null,  --"This can be something hospitals already have"
     name varchar(100) not null,
+    sname varchar(100) not null,
+    admin varchar(330) not null,
+    phone_admin varchar(30) not null,
+    phone_lab varchar(30) not null,
+    address varchar(200),
+    email_admin varchar(330),
+    email_lab varchar(330),
     max_bed int,
     current_bed int,
     -- "LOCATION to be added more efficiently"
@@ -22,8 +29,8 @@ create table hospitals
     mask_needed int,-- "I don't know whether this is per day or the total numbers"
     mask_current int, --"Current Inventory"
     testing_kits int,
-    capability_day int --"Capability of doing number of tests"
-
+    capability_day int, --"Capability of doing number of tests"
+    foreign key (admin) references users(email)
 
 );
 

@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
 from hmrm.models import db, Users, Hospital
+# from models import db, Users, Hospital
 
 # app = Blueprint("hmrm", __name__, static_folder="static/")
 
@@ -298,24 +299,37 @@ def user_dashboards():
     # current_user is the wrong way to do it but use it for now; Yashas will fix thing once the backend can populate info in the current way
     return render_template("user/dashboards.html", current_user=current_user)
 
-@app.route("/institution/create")
+@app.route("/institution/create", methods=['GET', 'POST'])
 @login_required
 def institution_create():
+    print("ASDADADADADADADADADADADADADASDADADADA")
+    print(request.method)
     if request.method == "POST":
-        data = request.data()
+        data = request.form
+        print(data.keys())
         institution = Hospital(
             name = data['name'],
+            sname = data['sname'],
             max_bed = data['max_bed'],
-            current_beds = data['current_bed'],
-            state = data['state'],
-            district = data['district'],
-            num_ventilators = data['num_ventilators'],
-            mask_needed = data['num_needed'],
-            num_testing_kits = data['num_testing_kits'],
-            testing_capacity = data['testing_capacity']
+            # current_beds = data['current_bed'],
+            # state = data['state'],
+            # district = data['district'],
+            # num_ventilators = data['num_ventilators'],
+            # mask_needed = data['num_needed'],
+            # num_testing_kits = data['num_testing_kits'],
+            testing_capacity = data['testing_capacity'], # Per day capacity
+            address = data['address'],
+            email_admin = data['email_admin'],
+            email_lab = data['email_lab'],
+            phone_lab = data['phone_lab'],
+            phone_admin = data['phone_admin'], 
+            admin = session['email']
+
             )
+
+        # I am not adding checks for now. Will add later. Very fragile
         db.session.add(institution)
-        db.commit()
+        db.session.commit()
         return jsonify({"status": "success"})
     return render_template("institution/create.html", current_user=current_user)
 

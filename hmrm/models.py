@@ -35,8 +35,15 @@ class Users(db.Model):
 
 
 class Hospital(db.Model):
+    __tablename__ = 'hospitals'
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
+    address = db.Column(db.String(200))
+    email_admin = db.Column(db.String(330))
+    email_lab= db.Column(db.String(330))
+    phone_lab= db.Column(db.String(30))
+    phone_admin= db.Column(db.String(30))
     max_bed = db.Column(db.Integer)
     current_beds = db.Column(db.Integer)
     state = db.Column(db.String(80))
@@ -45,6 +52,32 @@ class Hospital(db.Model):
     mask_needed = db.Column(db.Integer)
     num_testing_kits = db.Column(db.Integer)
     testing_capacity = db.Column(db.Integer)
+    # admin = db.relationship(db.String(330), db.ForeignKey('users.email'))
+    # admin = db.relationship("Users", ba
+    admin = db.Column(db.String(330), db.ForeignKey(
+        Users.email, ondelete="CASCADE"), nullable=False)
+
+    
+    def __init__(self, name, sname, email_admin, phone_admin,
+            phone_lab, email_lab, max_bed, testing_capacity, address, admin): 
+        #, district, state):
+        self.name = name
+        self.sname = sname
+        self.max_bed = max_bed
+        self.testing_capacity = testing_capacity
+        self.address = address
+        self.email_admin = email_admin
+        self.email_lab = email_lab
+        self.phone_lab = phone_lab
+        self.phone_admin = phone_admin,
+        self.admin = admin
+        # self.admin = 
+        # self.district = district
+        # self.state = state
+    def __repr__(self):
+        return self
+
+
 
 
 class Patient(db.Model):

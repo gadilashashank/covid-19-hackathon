@@ -13,63 +13,75 @@
                     <div class="uk-width-1-1@m">
                         <div class="uk-margin uk-width-large uk-margin-auto uk-card uk-card-default uk-card-body uk-box-shadow-large">
                             <h3 class="uk-card-title uk-text-center">Create Medical Institution</h3>
-                            <form>
+                            <form action="/institution/create" method="post">
                                 <div class="uk-margin">
                                     <div class="uk-inline uk-width-1-1">
                                         <span class="uk-form-icon" uk-icon="icon: user"></span>
-                                        <input class="uk-input uk-form-large" type="text" placeholder="institution name">
+                                        <input class="uk-input uk-form-large" type="text" placeholder="Institution Name" name="name">
                                     </div>
                                 </div>
                                 <div class="uk-margin">
                                     <div class="uk-inline uk-width-1-1">
                                         <span class="uk-form-icon" uk-icon="icon: tag"></span>
-                                        <input class="uk-input uk-form-large" type="text" placeholder="short name (for display)">
+                                        <input class="uk-input uk-form-large" type="text" placeholder="Short name (for display)" name="sname">
                                     </div>
                                 </div>
                                 <div class="uk-margin">
                                     <div class="uk-inline uk-width-1-1">
                                         <span class="uk-form-icon" uk-icon="icon: mail"></span>
-                                        <input class="uk-input uk-form-large" type="email" placeholder="email (administrative)">
+                                        <input class="uk-input uk-form-large" type="email" placeholder="email (administrative)" name="email_admin">
                                     </div>
                                 </div>
                                 <div class="uk-margin">
                                     <div class="uk-inline uk-width-1-1">
                                         <span class="uk-form-icon" uk-icon="icon: phone"></span>
-                                        <input class="uk-input uk-form-large" type="phone" placeholder="phone (administrative)">
+                                        <input class="uk-input uk-form-large" type="phone" placeholder="phone (administrative)" name="phone_admin">
                                     </div>
                                 </div>
                                 <div class="uk-margin">
                                     <div class="uk-inline uk-width-1-1">
                                         <span class="uk-form-icon" uk-icon="icon: mail"></span>
-                                        <input class="uk-input uk-form-large" type="email" placeholder="email (lab)">
+                                        <input class="uk-input uk-form-large" type="email" placeholder="email (lab)" name="email_lab">
                                     </div>
                                 </div>
                                 <div class="uk-margin">
                                     <div class="uk-inline uk-width-1-1">
                                         <span class="uk-form-icon" uk-icon="icon: phone"></span>
-                                        <input class="uk-input uk-form-large" type="phone" placeholder="phone (lab)">
+                                        <input class="uk-input uk-form-large" type="phone" placeholder="phone (lab)" name="phone_lab">
                                     </div>
                                 </div>
                                 <div class="uk-margin">
                                     <div class="uk-inline uk-width-1-1">
                                         <span class="uk-form-icon" uk-icon="icon: users"></span>
-                                        <input class="uk-input uk-form-large" type="number" placeholder="patient capacity">
+                                        <input class="uk-input uk-form-large" type="number" placeholder="Patient Capacity" name="max_bed">
                                     </div>
                                 </div>
                                 <div class="uk-margin">
                                     <div class="uk-inline uk-width-1-1">
                                         <span class="uk-form-icon" uk-icon="icon: pencil"></span>
-                                        <input class="uk-input uk-form-large" type="number" placeholder="testing capacity">
+                                        <input class="uk-input uk-form-large" type="number" placeholder="Testing Capacity" name="testing_capacity">
                                     </div>
                                 </div>
                                 <div class="uk-margin">
                                     <div class="uk-inline uk-width-1-1">
                                         <span class="uk-form-icon" uk-icon="icon: location"></span>
-                                        <input class="uk-input uk-form-large" type="text" placeholder="address">
+                                        <input class="uk-input uk-form-large" type="text" placeholder="Address", name="address">
                                     </div>
                                 </div>
+                                <!-- <div class="uk-margin"> -->
+                                <!--     <div class="uk-inline uk-width-1-1"> -->
+                                <!--         <span class="uk-form-icon" uk-icon="icon: location"></span> -->
+                                <!--         <input class="uk-input uk-form-large" type="text" placeholder="District", name="district"> -->
+                                <!--     </div> -->
+                                <!-- </div> -->
+                                <!-- <div class="uk-margin"> -->
+                                <!--     <div class="uk-inline uk-width-1-1"> -->
+                                <!--         <span class="uk-form-icon" uk-icon="icon: location"></span> -->
+                                <!--         <input class="uk-input uk-form-large" type="text" placeholder="State", name="state"> -->
+                                <!--     </div> -->
+                                <!-- </div> -->
                                 <div class="uk-margin">
-                                    <button class="uk-button uk-button-primary uk-button-large uk-width-1-1">Create</button>
+                                    <button type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">Create</button>
                                 </div>
                             </form>
                         </div>
