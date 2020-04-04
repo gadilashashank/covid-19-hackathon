@@ -14,7 +14,7 @@ create table hospitals
     hospital_id int primary key not null,  --"This can be something hospitals already have"
     name varchar(100) not null,
     sname varchar(100) not null,
-    admin varchar(330) not null,
+    admin varchar(330)
     phone_admin varchar(30) not null,
     phone_lab varchar(30) not null,
     address varchar(200),
