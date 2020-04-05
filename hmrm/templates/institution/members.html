@@ -62,7 +62,7 @@
                                 <tr>
                                     <td><a class="uk-link-muted uk-text-underline" href="/user/{{invite.userid}}"><u>{{ invite.name }}</u></a></td>
                                     <td>{{ invite.created }}</td>
-                                    <td><form action="/institution/{{current_institution.id}}/members?inviteid={{invite.inviteid}}" method="post"><button type="submit" method="post" class="uk-button uk-button-default uk-label-danger" type="button">Cancel</button></form></td>
+                                    <td><form action="/institution/{{current_institution.id}}/members?inviteid={{invite.inviteid}}" method="post"><button type="submit" class="uk-button uk-button-default uk-label-danger" type="button">Cancel</button></form></td>
                                   </tr>
                                 {% endfor %}
                             </tbody>

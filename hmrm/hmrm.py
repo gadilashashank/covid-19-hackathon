@@ -397,20 +397,41 @@ def administration_create():
 def administration_overview(id):
     return render_template("administration/overview.html", current_admin = get_administration_entity(id))
 
-@app.route("/administration/<int:id>/members")
+@app.route("/administration/<int:id>/members", methods=["GET", "POST"])
 @login_required
 def administration_members(id):
-    invitations = [{
-      "name" : "Hermi",
-      "userid" : 12,
-      "created" : "04 April 2020 17:24 IST",
-    },
-    {
-      "name" : "Albus Dumbledore",
-      "userid" : 15,
-      "created" : "04 April 2020 18:34 IST",
-    }]
-    return render_template("administration/members.html", current_admin =  get_administration_entity(id), invitations = invitations)
+    invite_error = None
+    if request.method == "POST":
+        if "inviteid" in request.args:
+            # cancelling an invite
+            inviteid = request.args["inviteid"]
+            Invitation.query.filter_by(inviteid=inviteid).delete()
+            db.session.commit()
+            return redirect(url_for('administration_members', id = id))
+        elif "sendinvite" in request.args:
+            # sending an invite
+            user_check = db.session.query(Users).filter(Users.email == request.form["email"]).first()
+            if user_check == None:
+                invite_error = "user does not exist"
+            else:
+                invite_add = Invitation(request.form["email"], session["email"], "administration", id)
+                db.session.add(invite_add)
+                db.session.commit()
+                return redirect(url_for('administration_members', id = id))
+
+    invitations = []
+
+    invs = db.session.query(Invitation).filter((Invitation.dashboard_id == id) & (Invitation.type == "administration")).all()
+    for invitation in invs:
+        target = db.session.query(Users).filter(Users.email == invitation.to_user).first()
+        invitations.append({
+            "name" : target.fname + ' ' + target.lname,
+            "userid" : target.user_id,
+            "created" : invitation.invited_date,
+            "inviteid" : invitation.inviteid
+        })
+
+    return render_template("administration/members.html", current_admin = get_administration_entity(id), invitations = invitations, invite_error = invite_error)
 
 @app.route("/administration/<int:admin_id>/view/<int:view_id>")
 @login_required
