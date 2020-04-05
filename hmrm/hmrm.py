@@ -317,9 +317,29 @@ def institution_members(id):
 def institution_information(id):
     return render_template("institution/information.html", current_institution = get_institution_entity(id))
 
-@app.route("/institution/<int:id>/records/patients")
+@app.route("/institution/<int:id>/records/patients", methods=["GET", "POST"])
 @login_required
 def institution_records_patients(id):
+    add_success = ""
+    if request.method == "POST":
+        if "add" in request.args:
+            sex = ""
+            if "male" in request.form and request.form["male"] == "on":
+                sex = "male"
+            if "female" in request.form and request.form["female"] == "on":
+                sex = "female"      
+
+            patient_add = Patient(request.form['name'], sex, id, request.form['ref_str'], request.form['state'], request.form['notes'])
+            db.session.add(patient_add)
+            db.session.flush()
+
+            # CHECK FOR DUPES
+
+            patient_history = History_patient(patient_add.patient_id, request.form['state'])
+            db.session.add(patient_history)
+            db.session.commit()
+            add_success = "Added successfully."
+
     # BACKEND TODO limit to top ten results
     find_results = [
         {
@@ -333,7 +353,7 @@ def institution_records_patients(id):
             "ref" : "HOG#15292884"
         }
     ]
-    return render_template("institution/records/patients.html", current_institution = get_institution_entity(id), find_results = find_results)
+    return render_template("institution/records/patients.html", current_institution = get_institution_entity(id), find_results = find_results, add_success = add_success)
 
 def get_administration_entity(id):
     administration = db.session.query(Administration).filter(Administration.doff_id == id).first()

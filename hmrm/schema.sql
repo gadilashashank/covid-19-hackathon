@@ -26,23 +26,17 @@ create table hospitals
 );
 
 
-create type  state_patient AS ENUM ('DEAD', 'MILD', 'CRITICAL', 'ASYMPTOMATIC',
-'DISCHARGE_SOON', 'SUSPECTED', 'RECOVERED');
-
-
-
 create table patients
 (
     patient_id serial primary key not null,
     name varchar(100) not null,
     sex varchar(10), -- "Handle genders?"
-    hospital int not null,
-    condition state_patient,
+    hospital_id int not null,
+    hospital_ref varchar(100),
+    condition varchar(32),
     age int,
-    disease varchar(100), -- "Can be enumerated"
-    history varchar(1000),
-    foreign key (hospital) references hospitals(hospital_id)
-
+    history varchar(1024),
+    foreign key (hospital_id) references hospitals(hospital_id)
 );
 
 
@@ -76,7 +70,7 @@ create table history_patient
     patient_id_rec serial primary key not null,
     patient_id int not null,
     date date,
-    condition state_patient,
+    condition varchar(32),
     foreign key (patient_id) references patients(patient_id)
 );
 

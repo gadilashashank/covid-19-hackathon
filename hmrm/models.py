@@ -72,21 +72,37 @@ class Hospital(db.Model):
     #     return self
 
 class Patient(db.Model):
+    __tablename__ = 'patients'
+
     patient_id = db.Column(db.Integer, primary_key=True, autoincrement = True)
     name = db.Column(db.String(80))
     sex = db.Column(db.String(10))
     hospital_id = db.Column(db.Integer, db.ForeignKey(
         Hospital.hospital_id, ondelete="CASCADE"), nullable=False)
-    hospital_ref = db.relationship(
-        "Hospital", backref=db.backref("Hospital", cascade="all"))
+    hospital_ref = db.Column(db.String(100))
 
-    condition = db.Column(db.Enum('DEAD', 'MILD', 'CRITICAL', 'ASYMPTOMATIC',
-'DISCHARGE_SOON', 'SUSPECTED', 'RECOVERED'))
+    condition = db.Column(db.String(32))
     age = db.Column(db.Integer)
-    disease = db.Column(db.String(512))
     history = db.Column(db.String(1024))
 
+    def __init__(self, name, sex, hospital_id, ref_str, state, history):
+        self.name = name
+        self.sex = sex
+        self.hospital_id = hospital_id
+        self.hospital_ref = ref_str
 
+        if state == "suspected":
+            self.condition = "SUSPECTED"
+        if state == "dead":
+            self.condition = "DEAD"
+        if state == "recovered":
+            self.condition = "RECOVERED"
+        if state == "negative":
+            self.condition = "NEGATIVE"
+        if state == "active":
+            self.condition = "ACTIVE"
+
+        self.history = history
 
 class History_patient(db.Model):
     __tablename__ = 'history_patient'
@@ -94,15 +110,24 @@ class History_patient(db.Model):
                  nullable = False, autoincrement=True)
     # patient_id = db.Column(db.Integer, nullable = False)
     date = db.Column(db.DateTime)
-    condition = db.Column(db.Enum("state_patient"))
+    condition = db.Column(db.String(32))
     patient_id = db.Column(db.Integer, db.ForeignKey(
         Patient.patient_id, ondelete="CASCADE"), nullable = False)
 
-    def __init__(self,patient_id, condition):
+    def __init__(self, patient_id, state):
         self.date = DATE.today()
         self.patient_id = patient_id
-        self.condition = condition
 
+        if state == "suspected":
+            self.condition = "SUSPECTED"
+        if state == "dead":
+            self.condition = "DEAD"
+        if state == "recovered":
+            self.condition = "RECOVERED"
+        if state == "negative":
+            self.condition = "NEGATIVE"
+        if state == "active":
+            self.condition = "ACTIVE"
 
 class Administration(db.Model):
     doff_id = db.Column(db.Integer, primary_key = True, nullable = False, 

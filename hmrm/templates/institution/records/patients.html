@@ -27,34 +27,40 @@
                 </ul>
                 <ul id="data-tables" class="uk-switcher uk-margin">
                   <li>
-                    {% if add_error is defined %}
+                    {% if add_success is defined and add_success is not none %}
+                      <div class="uk-alert-success" uk-alert>
+                          <a class="uk-alert-close" uk-close></a>
+                          <p>{{add_success}}</p>
+                      </div>
+                    {% endif %}
+                    {% if add_error is defined and add_error is not none %}
                       <div class="uk-alert-danger" uk-alert>
                           <a class="uk-alert-close" uk-close></a>
                           <p>{{add_error}}</p>
                       </div>
                     {% endif %}
-                    <form method="post">
+                    <form action="/institution/{{current_institution.id}}/records/patients?add=1" method="post">
                       <div class="uk-margin">
                         <div class="uk-inline uk-width-1-1">
                           <span class="uk-form-icon" uk-icon="icon: user"></span>
-                          <input class="uk-input uk-form-large" type="text" placeholder="name" name="email">
+                          <input class="uk-input uk-form-large" type="text" placeholder="name" name="name">
                         </div>
                       </div>
                       <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
-                        <span><input class="uk-radio" type="radio" name="radio1">
+                        <span><input class="uk-radio" type="radio" name="male">
                           <span class="uk-margin-left-small">Male</span>
                         </span>
-                        <span><input class="uk-radio" type="radio" name="radio1">
+                        <span><input class="uk-radio" type="radio" name="female">
                           <span class="uk-margin-left-small">Female</span>
                         </span>
                       </div>
                       <div class="uk-margin">
-                        <select class="uk-select">
-                          <option>Suspected</option>
-                          <option>Negative</option>
-                          <option>Active (positive)</option>
-                          <option>Recovered</option>
-                          <option>Dead</option>
+                        <select class="uk-select" name="state">
+                          <option name="suspected">suspected</option>
+                          <option name="negative">negative</option>
+                          <option name="active">active</option>
+                          <option name="recovered">recovered</option>
+                          <option name="dead">dead</option>
                         </select>
                       </div>
                       <div class="uk-margin">
@@ -71,7 +77,7 @@
                       </div>
                       <div class="uk-margin">
                         <label for="">History/Notes:</label>
-                        <textarea class="uk-textarea" rows="5" placeholder=""></textarea>
+                        <textarea class="uk-textarea" rows="5" placeholder="" name="notes"></textarea>
                       </div>
                       <div class="uk-margin">
                         <button type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">Add</button>
@@ -106,11 +112,11 @@
                       </div>
                       <div class="uk-margin">
                         <select class="uk-select">
-                          <option>Suspected</option>
-                          <option>Negative</option>
-                          <option>Active (positive)</option>
-                          <option>Recovered</option>
-                          <option>Dead</option>
+                          <option name="suspected">suspected</option>
+                          <option name="negative">negative</option>
+                          <option name="active">active</option>
+                          <option name="recovered">recovered</option>
+                          <option name="dead">dead</option>
                         </select>
                       </div>
                       <div class="uk-margin">
