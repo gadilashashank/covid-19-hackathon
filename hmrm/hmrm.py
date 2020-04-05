@@ -320,7 +320,8 @@ def institution_information(id):
 @app.route("/institution/<int:id>/records/patients", methods=["GET", "POST"])
 @login_required
 def institution_records_patients(id):
-    add_success = ""
+    add_success = None
+    fetched = None
     if request.method == "POST":
         if "add" in request.args:
             sex = ""
@@ -339,6 +340,36 @@ def institution_records_patients(id):
             db.session.add(patient_history)
             db.session.commit()
             add_success = "Added successfully."
+        elif "fetch" in request.args:
+            pid = request.form["recordid"]
+            patient = db.session.query(Patient).filter(Patient.patient_id == pid).first()
+
+            assert(patient is not None)
+            fetched = {
+                "recordid" : pid,
+                "name" : patient.name,
+                "sex" : patient.sex,
+                "state" : patient.condition,
+                "ref_str" : patient.hospital_ref,
+                "notes" : patient.history
+            }
+        elif "edit" in request.args:
+            pid = request.args["recordid"]
+
+            sex = ""
+            if "male" in request.form and request.form["male"] == "on":
+                sex = "male"
+            if "female" in request.form and request.form["female"] == "on":
+                sex = "female"
+
+            # TODO update patient info
+            # patient_add = Patient(request.form['name'], sex, id, request.form['ref_str'], request.form['state'], request.form['notes'])
+            # db.session.add(patient_add)
+            # db.session.flush()
+
+            patient_history = History_patient(pid, request.form['state'])
+            db.session.add(patient_history)
+            db.session.commit()
 
     # BACKEND TODO limit to top ten results
     find_results = [
@@ -353,7 +384,7 @@ def institution_records_patients(id):
             "ref" : "HOG#15292884"
         }
     ]
-    return render_template("institution/records/patients.html", current_institution = get_institution_entity(id), find_results = find_results, add_success = add_success)
+    return render_template("institution/records/patients.html", current_institution = get_institution_entity(id), find_results = find_results, add_success = add_success, fetched = fetched)
 
 def get_administration_entity(id):
     administration = db.session.query(Administration).filter(Administration.doff_id == id).first()

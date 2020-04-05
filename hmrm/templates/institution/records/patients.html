@@ -21,8 +21,8 @@
             <div class="uk-card-body">
               <div class="uk-margin uk-background-default">
                 <ul class="uk-tab" data-uk-tab="{connect:'#data-tables'}">
-                  <li class="uk-active"><a href="">Add Patient</a></li>
-                  <li><a href="">Edit Patient</a></li>
+                  <li {% if fetched is none %} class="uk-active" {% endif %}><a href="">Add Patient</a></li>
+                  <li {% if fetched is not none %} class="uk-active" {% endif %}><a href="">Edit Patient</a></li>
                   <li><a href="">Delete Patient</a></li>
                 </ul>
                 <ul id="data-tables" class="uk-switcher uk-margin">
@@ -91,43 +91,61 @@
                           <p>{{edit_error}}</p>
                       </div>
                     {% endif %}
-                    <form method="post">
+                    <form action="/institution/{{current_institution.id}}/records/patients?fetch=1" method="post">
                       <div class="uk-margin">
                         <div class="uk-inline uk-width-1-1">
                           <span class="uk-form-icon" uk-icon="icon: user"></span>
-                          <input class="uk-input uk-form-large" type="text" placeholder="record id" name="recordid">
+                          {% if fetched is not none %}
+                          <input class="uk-input uk-form-large" type="number" placeholder="{{fetched.recordid}}" name="recordid">
+                          {% else %}
+                          <input class="uk-input uk-form-large" type="number" placeholder="record id" name="recordid">
+                          {% endif %}
                         </div>
-                        <button class="uk-button uk-button-default uk-margin-top" type="button">FETCH</button>
+                        <button class="uk-button uk-button-default uk-margin-top" type="submit">FETCH</button>
                       </div>
+                    </form>
+                    <form action="/institution/{{current_institution.id}}/records/patients?edit=1&recordid={{fetched.recordid}}" method="post">
                       <hr>
                       <div class="uk-margin">
                         <div class="uk-inline uk-width-1-1">
                           <span class="uk-form-icon" uk-icon="icon: user"></span>
-                          <input class="uk-input uk-form-large" type="text" placeholder="name" name="email">
+                          {% if fetched is not none %}
+                          <input class="uk-input uk-form-large" type="text" placeholder="{{fetched.name}}" name="name">
+                          {% else %}
+                          <input class="uk-input uk-form-large" type="text" placeholder="name" name="name">
+                          {% endif %}
                         </div>
                       </div>
                       <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
-                        <span><input class="uk-radio" type="radio" name="radio1">Male</span>
-                        <span><input class="uk-radio" type="radio" name="radio1">Female</span>
+                        <span><input class="uk-radio" type="radio" {% if fetched is not none and fetched.sex == "male" %} checked="checked" {% endif %} name="male">Male</span>
+                        <span><input class="uk-radio" type="radio" {% if fetched is not none and fetched.sex == "female" %} checked="checked" {% endif %} name="female">Female</span>
                       </div>
                       <div class="uk-margin">
-                        <select class="uk-select">
-                          <option name="suspected">suspected</option>
-                          <option name="negative">negative</option>
-                          <option name="active">active</option>
-                          <option name="recovered">recovered</option>
-                          <option name="dead">dead</option>
+                        <select class="uk-select" name="state">
+                          <option {% if fetched is not none and fetched.state == "suspected" %}selected="selected"{% endif %} name="suspected">suspected</option>
+                          <option {% if fetched is not none and fetched.state == "negative" %}selected="selected"{% endif %} name="negative">negative</option>
+                          <option {% if fetched is not none and fetched.state == "active" %}selected="selected"{% endif %} name="active">active</option>
+                          <option {% if fetched is not none and fetched.state == "recovered" %}selected="selected"{% endif %} name="recovered">recovered</option>
+                          <option {% if fetched is not none and fetched.state == "dead" %}selected="selected"{% endif %} name="dead">dead</option>
                         </select>
                       </div>
                       <div class="uk-margin">
                         <div class="uk-inline uk-width-1-1">
                           <span class="uk-form-icon" uk-icon="icon: tag"></span>
+                          {% if fetched is not none %}
+                          <input class="uk-input uk-form-large" type="text" placeholder="{{fetched.ref_str}}" name="ref_str">
+                          {% else %}
                           <input class="uk-input uk-form-large" type="text" placeholder="internal reference string (example: HOSP#14232453)" name="ref_str">
+                          {% endif %}
                         </div>
                       </div>
                       <div class="uk-margin">
                         <label for="">History/Notes:</label>
+                        {% if fetched is not none %}
+                        <textarea class="uk-textarea" rows="5" placeholder="{{fetched.history}}"></textarea>
+                        {% else %}
                         <textarea class="uk-textarea" rows="5" placeholder=""></textarea>
+                        {% endif %}
                       </div>
                       <div class="uk-margin">
                         <button type="submit" class="uk-button uk-button-primary uk-button-large uk-width-1-1">Update</button>
