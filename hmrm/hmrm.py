@@ -4,6 +4,7 @@ from flask import Blueprint, render_template, request, Flask, session, abort, re
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
+import random
 from hmrm.models import db, Users, Hospital, Patient, History_patient, Administration, Member, Invitation
 # from models import db, Users, Hospital
 
@@ -228,7 +229,7 @@ def get_institution_entity(id):
     if len(suspected) > 1:
         fatal_increment = fatal[-1] - fatal[-2]
     
-    entity = {
+    entity1 = {
         "name": hospital.name,
         "shortname" : hospital.sname,
         "id": id,
@@ -269,7 +270,50 @@ def get_institution_entity(id):
         }
     }
 
-    return entity
+    entity2 = {
+        "name": hospital.name,
+        "shortname" : hospital.sname,
+        "id": id,
+        "email_admin" : hospital.email_admin,
+        "email_lab" : hospital.email_lab,
+        "phone_admin" : hospital.phone_admin,
+        "phone_lab" : hospital.phone_lab,
+        "address" : hospital.address,
+        "type" : "institution",
+        "patient_capacity" : hospital.patient_capacity,
+        "testing_capacity" : hospital.testing_capacity,
+        "cases": {
+            "suspected" : 64,
+            "suspected_increment" : 12,
+            "active" : 432,
+            "active_increment" : 432 - 244,
+            "recovered" : 74,
+            "recovered_increment" : 4,
+            "fatal" : 15,
+            "fatal_increment" : 4
+            # "suspected": suspected_patients,
+            # "suspected_increment": suspected_increment,
+            # "active": active_patients,
+            # "active_increment": active_increment,
+            # "recovered": recovered_patients,
+            # "recovered_increment": recovered_increment,
+            # "fatal": dead_patients,
+            # "fatal_increment": fatal_increment            
+        },
+
+        "history": {
+            "active" : [6, 10, 45, 83, 92, 115, 244, 432],
+            "recovered" : [0, 1, 6, 24, 44, 67, 70, 74],
+            "fatal" : [0, 0, 0, 1, 6, 8, 11, 15],
+            # "active": active,
+            # "recovered": recovered,
+            # "fatal": fatal
+        }
+    }
+
+    if id % 2:
+        return entity1
+    return entity2
 
 @app.route("/institution/<int:id>/overview")
 @login_required
